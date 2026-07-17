@@ -7,15 +7,13 @@ To open the project, Unity 6.3 LTS (6000.3.10f1) is required.
 2. The shotgun does not reload for clients.
 3. The cap's (SCP-268) invisibility doesn't work, and it is not visible in 3rd person.
 4. SCP-106 has to get extremely close to grab a target, which shouldn't happen.
-5. SCP-173 teleports without sound. Also, when being looked at, the right-click model showing where you can teleport doesn't appear, and there is no eye icon on the crosshair.
-6. Many items are missing 3rd-person models and character animations.
-7. The bag lacks 1st-person synchronization.
-8. SCP-049 has no sounds and cannot mark targets by pressing 'F'.
-9. SCP lockers/pedestals do not synchronize, nor do items across the facility.
-10. Facility structures such as the Armory (where the rifle and grenades spawn), medkit lockers, and SCP-079 generators [also do not sync].
-11. If a spectator is watching a player, and that player dies and respawns, the spectator sees a black screen with floating hands (this is fixed if you spawn the spectator as another class and then back to spectator).
-12. If you press the middle mouse button while holding the revolver, the animation will play for the player but not for the spectator.
-13. Clients cannot talk while waiting for the round to start; only the host can.
-14. SCP-939's head rotates weirdly while crouching.
-15. SCP-939 has very strange running and walking animations.
-16. The number of alive players is displayed incorrectly for the SCPs.
+5. Many items are missing 3rd-person models and character animations.
+6. The bag lacks 1st-person synchronization.
+7. SCP lockers/pedestals do not synchronize, nor do items across the facility.
+8. Facility structures such as the Armory (where the rifle and grenades spawn), medkit lockers, and SCP-079 generators [also do not sync].
+9. If a spectator is watching a player, and that player dies and respawns, the spectator sees a black screen with floating hands (this is fixed if you spawn the spectator as another class and then back to spectator).
+10. If you press the middle mouse button while holding the revolver, the animation will play for the player but not for the spectator.
+11. Clients cannot talk while waiting for the round to start; only the host can.
+12. SCP-939's head rotates weirdly while crouching.
+13. SCP-939 has very strange running and walking animations.
+14. The number of alive players is displayed incorrectly for the SCPs.

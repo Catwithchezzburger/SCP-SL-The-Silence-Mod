@@ -16,6 +16,7 @@ Shader "Particle Z-Test"
 			Blend SrcAlpha One, SrcAlpha One
 			ColorMask RGB
 			ZWrite Off
+			ZTest Always
 			Cull Off
 			GpuProgramID 36437
 
