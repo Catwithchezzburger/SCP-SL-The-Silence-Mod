@@ -108,7 +108,7 @@ namespace PlayerRoles.PlayableScps.Scp106
                 if (Physics.Linecast(_ownerPosition, _targetPosition, MicroHIDItem.WallMask))
                     return;
 
-                if (_dotOverDistance.Evaluate(sqrMag) <= Vector3.Dot(diff.normalized, forward.normalized))
+                if (_dotOverDistance.Evaluate(sqrMag) > Vector3.Dot(diff.normalized, forward.normalized))
                 {
                     SendCooldown(_missCooldown);
                     return;

@@ -61,7 +61,7 @@ namespace PlayerRoles.PlayableScps.Scp173
                     _volume,
                     FalloffType.Exponential,
                     _channel,
-                    1f,
+                    0f,
                     false);
             }
 
