@@ -11,9 +11,8 @@ To open the project, Unity 6.3 LTS (6000.3.10f1) is required.
 6. The bag lacks 1st-person synchronization.
 7. SCP lockers/pedestals do not synchronize, nor do items across the facility.
 8. Facility structures such as the Armory (where the rifle and grenades spawn), medkit lockers, and SCP-079 generators [also do not sync].
-9. If a spectator is watching a player, and that player dies and respawns, the spectator sees a black screen with floating hands (this is fixed if you spawn the spectator as another class and then back to spectator).
-10. If you press the middle mouse button while holding the revolver, the animation will play for the player but not for the spectator.
-11. Clients cannot talk while waiting for the round to start; only the host can.
-12. SCP-939's head rotates weirdly while crouching.
-13. SCP-939 has very strange running and walking animations.
-14. The number of alive players is displayed incorrectly for the SCPs.
+9. If you press the middle mouse button while holding the revolver, the animation will play for the player but not for the spectator.
+10. Clients cannot talk while waiting for the round to start; only the host can.
+11. SCP-939's head rotates weirdly while crouching.
+12. SCP-939 has very strange running and walking animations.
+13. The number of alive players is displayed incorrectly for the SCPs.

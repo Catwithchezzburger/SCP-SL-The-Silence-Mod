@@ -53,7 +53,14 @@ namespace DeathAnimations
 
         private void OnTargetChanged()
         {
-            if (IsPlaying && !IsFirstperson)
+            // While the death-cam is active (tracker alive, no spectatable target yet),
+            // the target-cleared event must not end the animation. Once a real target is
+            // selected, the animation ends even if the target is the ragdoll's owner —
+            // otherwise a respawned target leaves the darken volume up forever.
+            if (SpectatorTargetTracker.TrackerSet && SpectatorTargetTracker.CurrentTarget == null)
+                return;
+
+            if (IsPlaying)
             {
                 IsPlaying = false;
                 OnAnimationEnded();

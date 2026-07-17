@@ -76,15 +76,6 @@ namespace PlayerRoles.Spectating
                     MainCameraController.ForceUpdatePosition();
                     if (value != null)
                     {
-                        // Selecting a real player to spectate releases any static tracked
-                        // transform (e.g. the first-person death-cam anchor set by RagdollHead).
-                        // That anchor is normally cleared by RagdollHead.OnAnimationEnded, but
-                        // for your OWN death-cam the FirstpersonDeathAnimation.OnTargetChanged
-                        // path can't fire it (IsFirstperson stays true while you own the ragdoll),
-                        // so without this the camera would stay frozen at the death position even
-                        // though CurrentTarget is set and moving. Clearing the flag here makes
-                        // CurrentOffset take the CURRENT_TARGET branch and follow the spectated player.
-                        _trackedTransformSet = false;
                         LastTrackedPlayer = (value.MainRole.TryGetOwner(out var hub) ? hub : null);
                         value.OnBeganSpectating();
                     }
