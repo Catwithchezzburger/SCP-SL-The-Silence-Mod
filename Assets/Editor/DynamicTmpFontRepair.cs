@@ -38,7 +38,6 @@ namespace FontEditorTools
 		[MenuItem("Tools/Fonts/Repair Dynamic TMP Fonts (fix tofu ▯)")]
 		public static void Repair()
 		{
-			// Needed before ResetAtlasTexture / dynamic glyph rendering can run.
 			FontEngine.InitializeFontEngine();
 
 			string[] guids = AssetDatabase.FindAssets("t:TMP_FontAsset");
