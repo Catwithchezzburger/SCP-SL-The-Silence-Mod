@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public static class TaskbarFlasher
 {
+#if UNITY_STANDALONE_WIN
     private struct FlashWindowInfo
     {
         public uint Size;
@@ -16,6 +17,7 @@ public static class TaskbarFlasher
     }
 
     private const string User32 = "user32.dll";
+#endif
 
     private static IntPtr _windowHandle;
 
@@ -25,6 +27,7 @@ public static class TaskbarFlasher
     {
         get
         {
+#if UNITY_STANDALONE_WIN
             if (_windowHandle != IntPtr.Zero)
                 return _windowHandle;
 
@@ -34,13 +37,16 @@ public static class TaskbarFlasher
                 _windowHandle = GetWindow();
 
             return _windowHandle;
+#else
+            return IntPtr.Zero;
+#endif
         }
     }
 
     [RuntimeInitializeOnLoadMethod]
     private static void RegisterEvent()
     {
-        _ = WindowHandle; 
+        _ = WindowHandle;
 
         PlayerRoleManager.OnRoleChanged += OnRoleChanged;
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -69,6 +75,7 @@ public static class TaskbarFlasher
         if (handle == IntPtr.Zero)
             return;
 
+#if UNITY_STANDALONE_WIN
         var info = new FlashWindowInfo
         {
             Size = (uint)Marshal.SizeOf(typeof(FlashWindowInfo)),
@@ -86,8 +93,10 @@ public static class TaskbarFlasher
         {
             Debug.LogException(ex);
         }
+#endif
     }
 
+#if UNITY_STANDALONE_WIN
     [DllImport(User32)]
     private static extern IntPtr GetWindow();
 
@@ -96,4 +105,5 @@ public static class TaskbarFlasher
 
     [DllImport(User32)]
     private static extern bool FlashWindow(ref FlashWindowInfo info);
+#endif
 }

@@ -1,10 +1,8 @@
 fileFormatVersion: 2
 guid: d66f5ad83a13a8e4e6f7a4574a75b832
-timeCreated: 1776604551
-licenseType: Free
 PluginImporter:
-  serializedVersion: 2
   externalObjects: {}
+  serializedVersion: 3
   iconMap: {}
   executionOrder: {}
   defineConstraints: []
@@ -13,20 +11,40 @@ PluginImporter:
   isExplicitlyReferenced: 0
   validateReferences: 0
   platformData:
-  - first:
-      Any:
-    second:
+    Any:
       enabled: 1
-      settings: {}
-  - first:
-      Editor: Editor
-    second:
+      settings:
+        Exclude Editor: 0
+        Exclude Linux64: 0
+        Exclude OSXUniversal: 0
+        Exclude Win: 0
+        Exclude Win64: 0
+    Editor:
+      enabled: 1
+      settings:
+        CPU: AnyCPU
+        DefaultValueInitialized: true
+        OS: Windows
+    Linux64:
+      enabled: 1
+      settings:
+        CPU: AnyCPU
+    OSXUniversal:
+      enabled: 1
+      settings:
+        CPU: AnyCPU
+    Win:
+      enabled: 1
+      settings:
+        CPU: AnyCPU
+    Win64:
+      enabled: 1
+      settings:
+        CPU: AnyCPU
+    WindowsStoreApps:
       enabled: 0
       settings:
-        DefaultValueInitialized: true
-  output:
-    dllType: 0
-    scriptingRuntimeVersion: 0
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+        CPU: AnyCPU
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

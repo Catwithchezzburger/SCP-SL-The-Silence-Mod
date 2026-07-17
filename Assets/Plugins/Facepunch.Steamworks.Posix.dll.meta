@@ -1,12 +1,12 @@
 fileFormatVersion: 2
-guid: 23541350b539c81419f4b61c55b536b4
+guid: 5abb4720cec7d030d89d2b1197a5a1ad
 PluginImporter:
   externalObjects: {}
   serializedVersion: 3
   iconMap: {}
   executionOrder: {}
   defineConstraints: []
-  isPreloaded: 1
+  isPreloaded: 0
   isOverridable: 0
   isExplicitlyReferenced: 0
   validateReferences: 1
@@ -22,25 +22,29 @@ PluginImporter:
     Editor:
       enabled: 1
       settings:
-        CPU: AnyCPU
+        CPU: x86_64
         DefaultValueInitialized: true
-        OS: Windows
+        OS: Linux
     Linux64:
       enabled: 1
       settings:
-        CPU: None
+        CPU: AnyCPU
     OSXUniversal:
       enabled: 1
       settings:
-        CPU: None
+        CPU: AnyCPU
     Win:
       enabled: 1
       settings:
-        CPU: None
+        CPU: AnyCPU
     Win64:
       enabled: 1
       settings:
-        CPU: x86_64
+        CPU: AnyCPU
+    WindowsStoreApps:
+      enabled: 0
+      settings:
+        CPU: AnyCPU
   userData: 
   assetBundleName: 
   assetBundleVariant: 

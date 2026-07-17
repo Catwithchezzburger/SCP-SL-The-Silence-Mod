@@ -6,7 +6,12 @@ namespace VoiceChat.Codec
 {
     internal class OpusWrapper
     {
+        // private const string DllName = "libopus-0";
+        #if UNITY_STANDALONE_WIN
         private const string DllName = "libopus-0";
+        #elif UNITY_STANDALONE_LINUX
+        private const string DllName = "libopus.so.0";
+        #endif
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         private static extern int opus_encoder_get_size(int channels);
