@@ -61,31 +61,12 @@ namespace PlayerRoles.PlayableScps
 
 		public override bool TryGetViewmodelFov(out float fov)
 		{
-
-			if (this is IHudScp hudScp)
+			if (this is IHudScp && ScpHudController.CurInstance is IViewmodelRole vmRole)
 			{
-				if (hudScp.HudPrefab is IViewmodelRole vmRole)
-				{
-					return vmRole.TryGetViewmodelFov(out fov);
-				}
+				return vmRole.TryGetViewmodelFov(out fov);
 			}
 
-			fov = 0f;
-
-
-			if (!TryGetOwner(out ReferenceHub hub) || hub == null)
-				return false;
-
-			var spectatorModule = hub.GetComponent<SpectatableModuleBase>();
-			if (spectatorModule == null)
-				return false;
-
-			var spectatedRole = spectatorModule.MainRole;
-			if (spectatedRole == null)
-				return false;
-			IViewmodelRole role = spectatedRole as IViewmodelRole;
-			role.TryGetViewmodelFov(out fov);
-			return true;
+			return base.TryGetViewmodelFov(out fov);
 		}
 	}
 }

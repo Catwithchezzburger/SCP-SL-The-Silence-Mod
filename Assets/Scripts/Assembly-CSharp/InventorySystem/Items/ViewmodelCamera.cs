@@ -11,8 +11,11 @@ namespace InventorySystem.Items
 
         public static bool _camSet;
 
+        private int _mask;
+
         public void ResetCam()
         {
+            _viewModelCamera.cullingMask = 0;
             _resetting = true;
         }
 
@@ -20,6 +23,7 @@ namespace InventorySystem.Items
         {
             _camSet = true;
             _viewModelCamera = GetComponent<Camera>();
+            _mask = _viewModelCamera.cullingMask;
             SpectatorTargetTracker.OnTargetChanged += ResetCam;
         }
 
@@ -33,10 +37,12 @@ namespace InventorySystem.Items
         {
             if (TryGetViewmodelFov(out var fov) && !_resetting)
             {
+                _viewModelCamera.cullingMask = _mask;
                 _viewModelCamera.fieldOfView = fov;
             }
             else
             {
+                _viewModelCamera.cullingMask = 0;
                 _resetting = false;
             }
         }

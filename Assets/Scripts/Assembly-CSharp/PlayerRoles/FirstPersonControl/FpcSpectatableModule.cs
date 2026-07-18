@@ -109,14 +109,18 @@ namespace PlayerRoles.FirstPersonControl
 
         public bool TryGetViewmodelFov(out float fov)
         {
-            fov = 0f;
-
             if (SpawnedViewmodel != null)
             {
                 fov = SpawnedViewmodel.ViewmodelCameraFOV;
                 return true;
             }
 
+            if (MainRole is IViewmodelRole viewmodelRole)
+            {
+                return viewmodelRole.TryGetViewmodelFov(out fov);
+            }
+
+            fov = 0f;
             return false;
         }
     }
