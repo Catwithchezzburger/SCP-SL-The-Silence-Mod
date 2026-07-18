@@ -80,15 +80,15 @@ namespace GameCore
 
         static Version()
         {
-            Major = 12;
-            Minor = 0;
-            Revision = 2;
+            Major = 0;
+            Minor = 1;
+            Revision = 0;
             AlwaysAcceptReleaseBuilds = false;
-            BuildType = VersionType.PublicBeta;
+            BuildType = VersionType.Development;
             BackwardCompatibility = false;
             BackwardRevision = 0;
             DescriptionOverride = null;
-            VersionString = string.Format("{0}.{1}.{2}{3}", Major, Minor, Revision, (!ExtendedVersionCheckNeeded) ? string.Empty : ("-" + (DescriptionOverride ?? "12.0.1-rc-2298ba84")));
+            VersionString = string.Format("{0}.{1}.{2}{3}", Major, Minor, Revision, (!ExtendedVersionCheckNeeded) ? string.Empty : ("-" + (DescriptionOverride ?? "0.1.0-dev")));
         }
 
         public static bool ListedServerCompatibilityCheck(string serverVersion)
