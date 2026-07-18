@@ -45,8 +45,6 @@ namespace PlayerRoles.PlayableScps.Scp096
                 return false;
             }
 
-            base.Role.TryGetOwner(out var hub);
-
             if (Targets.Count == 0 && base.Owner.isLocalPlayer)
             {
                 PlayTargetSound();
@@ -59,7 +57,7 @@ namespace PlayerRoles.PlayableScps.Scp096
 
             Targets.Add(target);
 
-            if (!NetworkServer.active && !_markers.ContainsKey(target))
+            if (NetworkClient.active && !_markers.ContainsKey(target))
             {
                 _markers.Add(target, Instantiate(TargetMarker, target.transform));
             }

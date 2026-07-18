@@ -78,8 +78,31 @@ namespace PlayerRoles.FirstPersonControl
             SharedHandsController.UpdateInstance(null);
         }
 
+        public override void ResetObject()
+        {
+            base.ResetObject();
+            Inventory.OnCurrentItemChanged -= OnCurrentItemChanged;
+
+            if (SpawnedViewmodel != null)
+            {
+                Destroy(SpawnedViewmodel.gameObject);
+                SpawnedViewmodel = null;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Inventory.OnCurrentItemChanged -= OnCurrentItemChanged;
+        }
+
         private void OnCurrentItemChanged(ReferenceHub hub, ItemIdentifier oldItem, ItemIdentifier newItem)
         {
+            if (this == null)
+            {
+                Inventory.OnCurrentItemChanged -= OnCurrentItemChanged;
+                return;
+            }
+
             if (hub != TargetHub)
                 return;
 
