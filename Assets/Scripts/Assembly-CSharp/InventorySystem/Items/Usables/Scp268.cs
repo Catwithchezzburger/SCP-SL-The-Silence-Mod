@@ -101,7 +101,6 @@ namespace InventorySystem.Items.Usables
             if (state)
             {
                 Effect.Intensity = 1;
-                UnityEngine.Debug.Log($"[268-DEBUG] SetState(true) on PlayerId={base.Owner?.PlayerId}, Effect.IsEnabled={Effect.IsEnabled}, Effect.Intensity={Effect.Intensity}");
                 _stopwatch.Restart();
             }
             else if (IsWorn)

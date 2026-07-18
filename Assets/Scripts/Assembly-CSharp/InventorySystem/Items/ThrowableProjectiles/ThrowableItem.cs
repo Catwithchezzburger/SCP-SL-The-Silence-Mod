@@ -395,7 +395,13 @@ namespace InventorySystem.Items.ThrowableProjectiles
 
         public void ServerProcessInitiation()
         {
-            if (!AllowHolster)
+            // On a host the client-side prediction shares this instance and has already started
+            // ThrowStopwatch before the looped-back request is processed, so AllowHolster would
+            // reject it and spectators would never receive the BeginThrow broadcast (pin-pull
+            // anim/sound). The host's own client only sends this on a real pin pull, so trust it.
+            // Latent NW bug — upstream only ever runs dedicated. Same family as the Jailbird
+            // host state race.
+            if (!AllowHolster && !base.IsLocalPlayer)
                 return;
 
             if (CustomPlayerEffects.UsableItemModifierEffectExtensions.TryGetSpeedMultiplier(ItemTypeId, base.Owner, out var multiplier) && multiplier <= 0f)
@@ -410,6 +416,19 @@ namespace InventorySystem.Items.ThrowableProjectiles
 
         public void ServerProcessCancellation()
         {
+            // Host: ClientTryCancel already started CancelStopwatch and reset ThrowStopwatch on
+            // this shared instance, so both ReadyToThrow and !CancelStopwatch.IsRunning fail and
+            // the CancelThrow broadcast is silently dropped for spectators/other players.
+            if (base.IsLocalPlayer)
+            {
+                if (_alreadyFired || CancelAnimTime <= 0f)
+                    return;
+
+                Utils.Networking.NetworkUtils.SendToAuthenticated(new ThrowableNetworkHandler.ThrowableItemAudioMessage(
+                    base.ItemSerial, ThrowableNetworkHandler.RequestType.CancelThrow));
+                return;
+            }
+
             if (!ReadyToThrow || _alreadyFired || CancelStopwatch.IsRunning || CancelAnimTime <= 0f)
                 return;
 

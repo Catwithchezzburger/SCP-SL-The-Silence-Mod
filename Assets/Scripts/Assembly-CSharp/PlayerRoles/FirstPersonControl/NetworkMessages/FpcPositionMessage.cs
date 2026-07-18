@@ -36,12 +36,7 @@ namespace PlayerRoles.FirstPersonControl.NetworkMessages
             {
                 if (allHub.roleManager.CurrentRole is IFpcRole fpcRole)
                 {
-                    bool isInvisible = !AssignedNetIds.Contains(allHub.netId);
-                    if (isInvisible && !allHub.isLocalPlayer)
-                    {
-                        UnityEngine.Debug.Log($"[268-DEBUG] Client: hub PlayerId={allHub.PlayerId} marked IsInvisible=true (excluded from this tick's sync)");
-                    }
-                    fpcRole.FpcModule.Motor.IsInvisible = isInvisible;
+                    fpcRole.FpcModule.Motor.IsInvisible = !AssignedNetIds.Contains(allHub.netId);
                 }
             }
         }

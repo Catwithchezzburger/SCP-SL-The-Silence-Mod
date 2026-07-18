@@ -100,7 +100,7 @@ namespace PlayerRoles.PlayableScps.Scp049
             if (ragdoll == null)
                 return false;
 
-            if (_resurrectAbility.CheckRagdoll(ragdoll) != false)
+            if (!_resurrectAbility.CheckRagdoll(ragdoll))
                 return false;
 
             _availableRagdolls.Add(ragdoll);
@@ -110,7 +110,7 @@ namespace PlayerRoles.PlayableScps.Scp049
 
         private bool ServerRevalidateOld()
         {
-            if (!HashsetExtensions.TryGetFirst(_availableRagdolls, x => _resurrectAbility.CheckRagdoll(x) != false, out var first))
+            if (!HashsetExtensions.TryGetFirst(_availableRagdolls, x => !_resurrectAbility.CheckRagdoll(x), out var first))
                 return false;
 
             _availableRagdolls.Remove(first);
@@ -120,10 +120,10 @@ namespace PlayerRoles.PlayableScps.Scp049
 
         private void UpdateIndicators()
         {
-            var camPos = MainCameraController._currentCamera.position;
-
             if (!Owner.isLocalPlayer && !SpectatorNetworking.IsLocallySpectated(Owner))
                 return;
+
+            var camPos = MainCameraController._currentCamera.position;
 
             foreach (var ragdoll in _availableRagdolls)
                 RefreshIndicator(camPos, ragdoll);
@@ -174,7 +174,7 @@ namespace PlayerRoles.PlayableScps.Scp049
                 }
 
                 var dist = Mathf.Sqrt(sqrDist);
-                var alpha = Mathf.InverseLerp(_fullOpacityDistance, _visibleDistance, dist);
+                var alpha = Mathf.InverseLerp(_visibleDistance, _fullOpacityDistance, dist);
                 indicator.SetAlpha(alpha);
 
                 var tr = indicator.Instance.transform;
@@ -248,8 +248,7 @@ namespace PlayerRoles.PlayableScps.Scp049
                 return;
 
             var netId = reader.ReadUInt();
-			NetworkIdentity identity = NetworkIdentity.GetSceneIdentity(netId);
-            if (identity == null)
+            if (!NetworkClient.spawned.TryGetValue(netId, out NetworkIdentity identity))
                 return;
 
             if (!identity.TryGetComponent<BasicRagdoll>(out var ragdoll))
@@ -276,7 +275,7 @@ namespace PlayerRoles.PlayableScps.Scp049
                 return;
 
             _rpcType = ListSyncRpcType.FullResync;
-            ServerSendRpc(hub);
+            base.ServerSendRpc(hub);
         }
 
         private void OnRagdollSpawned(BasicRagdoll ragdoll)
@@ -297,13 +296,6 @@ namespace PlayerRoles.PlayableScps.Scp049
             _syncRagdoll = ragdoll?.netId ?? 0;
 
             ServerSendRpc(x => x == Owner || x.roleManager.CurrentRole is SpectatorRole);
-        }
-
-        private new void ServerSendRpc(ReferenceHub target)
-        {
-            _rpcType = ListSyncRpcType.FullResync;
-            _syncRagdoll = 0;
-            ServerSendRpc(x => x == target || x.roleManager.CurrentRole is SpectatorRole);
         }
 
         private void OnRagdollRemoved(BasicRagdoll ragdoll)

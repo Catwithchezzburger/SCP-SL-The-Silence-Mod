@@ -3,6 +3,9 @@
 // Cull Off, zTest = 0 (Disabled) — depth test is explicitly OFF, particles render
 // through walls. Verified against shaders with no ZTest line (Standard, Legacy
 // Particles/Additive), which all serialize zTest = 4 (LEqual); 0 here is deliberate.
+// The compiled shader has NO SOFTPARTICLES_ON variant (keyword absent from the
+// binary) — soft-particle depth fade would zero alpha behind walls and defeat
+// ZTest Always, so it must not be reintroduced. _InvFade is a dead property.
 // Fragment math: 2 * (vertexColor * _TintColor, rgb *= _Glow) * tex.
 Shader "Particle Z-Test"
 {
@@ -31,7 +34,6 @@ Shader "Particle Z-Test"
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 2.0
-			#pragma multi_compile_particles
 			#pragma multi_compile_fog
 
 			#include "UnityCG.cginc"
@@ -55,9 +57,6 @@ Shader "Particle Z-Test"
 				fixed4 color : COLOR;
 				float2 texcoord : TEXCOORD0;
 				UNITY_FOG_COORDS(1)
-				#ifdef SOFTPARTICLES_ON
-				float4 projPos : TEXCOORD2;
-				#endif
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
@@ -67,10 +66,6 @@ Shader "Particle Z-Test"
 				UNITY_SETUP_INSTANCE_ID(v);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 				o.vertex = UnityObjectToClipPos(v.vertex);
-				#ifdef SOFTPARTICLES_ON
-				o.projPos = ComputeScreenPos(o.vertex);
-				COMPUTE_EYEDEPTH(o.projPos.z);
-				#endif
 				o.color = v.color * _TintColor;
 				o.color.rgb *= _Glow;
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
@@ -78,20 +73,8 @@ Shader "Particle Z-Test"
 				return o;
 			}
 
-			#ifdef SOFTPARTICLES_ON
-			UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
-			float _InvFade;
-			#endif
-
 			fixed4 frag (v2f i) : SV_Target
 			{
-				#ifdef SOFTPARTICLES_ON
-				float sceneZ = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)));
-				float partZ = i.projPos.z;
-				float fade = saturate(_InvFade * (sceneZ - partZ));
-				i.color.a *= fade;
-				#endif
-
 				fixed4 col = 2.0f * i.color * tex2D(_MainTex, i.texcoord);
 				// Additive blend: fog fades toward black, not fog color.
 				UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0, 0, 0, 0));

@@ -111,13 +111,6 @@ namespace InventorySystem.Items.MicroHID
         {
             base.InitSpectator(ply, id, wasEquipped);
 
-            // OnEquipped() (which drives FirstTimePickup) is only ever called for the local
-            // player (Inventory.cs gates ViewModel.OnEquipped on isLocalPlayer), so a spectator's
-            // spawned viewmodel never gets this flag — the Draw-layer inspect flourish silently
-            // never plays for them. Approximate it here from synced energy, both for the "just
-            // started spectating" catch-up below and for a live equip switch (wasEquipped false).
-            AnimatorSetBool(FirstTimePickupHash, Energy == 1f);
-
             if (!wasEquipped)
             {
                 return;
@@ -134,6 +127,8 @@ namespace InventorySystem.Items.MicroHID
 
         internal override void OnEquipped()
         {
+            base.OnEquipped();
+
             bool isFirstTime = Energy == 1f
                 && _pickupTime + _firstTimeInspectMaxTime > Time.timeSinceLevelLoad;
 

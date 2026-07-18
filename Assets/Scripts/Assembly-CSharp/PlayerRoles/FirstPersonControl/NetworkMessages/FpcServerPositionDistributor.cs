@@ -107,10 +107,6 @@ namespace PlayerRoles.FirstPersonControl.NetworkMessages
                 if (allHub.netId != receiver.netId && allHub.roleManager.CurrentRole is IFpcRole fpcRole)
                 {
                     bool flag2 = flag && !visibilityController.ValidateVisibility(allHub);
-                    if (allHub.playerEffectsController.GetEffect<CustomPlayerEffects.Invisible>()?.IsEnabled == true)
-                    {
-                        UnityEngine.Debug.Log($"[268-DEBUG] WriteAll: receiver={receiver.PlayerId} (roleIsCustomVis={flag}), target={allHub.PlayerId} isInvisibleEffect=true, excluded(flag2)={flag2}");
-                    }
                     FpcSyncData newSyncData = GetNewSyncData(receiver, allHub, fpcRole.FpcModule, flag2);
                     if (!flag2)
                     {
