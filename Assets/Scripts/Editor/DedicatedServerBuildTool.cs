@@ -192,7 +192,7 @@ public class DedicatedServerBuildTool : EditorWindow
         if (platform == ServerPlatform.Windows)
         {
             string bat = "@echo off\r\n" +
-                         $"\"%~dp0{exeName}\" -nographics -batchmode -port {DefaultPort}\r\n" +
+                         $"\"%~dp0{exeName}\" -nographics -batchmode -stdout -port{DefaultPort}\r\n" +
                          "pause\r\n";
             File.WriteAllText(Path.Combine(outputDir, "RunServer.bat"), bat);
         }
@@ -201,7 +201,7 @@ public class DedicatedServerBuildTool : EditorWindow
             string sh = "#!/bin/bash\n" +
                         "DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\n" +
                         $"chmod +x \"$DIR/{exeName}\"\n" +
-                        $"\"$DIR/{exeName}\" -nographics -batchmode -port {DefaultPort} \"$@\"\n";
+                        $"\"$DIR/{exeName}\" -nographics -batchmode -stdout -port{DefaultPort} \"$@\"\n";
             File.WriteAllText(Path.Combine(outputDir, "run_server.sh"), sh);
         }
     }

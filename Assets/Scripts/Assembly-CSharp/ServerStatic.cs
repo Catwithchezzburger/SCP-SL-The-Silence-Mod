@@ -82,7 +82,6 @@ public class ServerStatic : MonoBehaviour
             AudioListener.volume = 0f;
             AudioListener.pause = true;
             QualitySettings.pixelLightCount = 0;
-            GUI.enabled = false;
 
             ServerConsole.AddLog("SCP Secret Laboratory process started. Creating match...", ConsoleColor.Green);
             ServerTickrate = 60;
@@ -102,7 +101,6 @@ public class ServerStatic : MonoBehaviour
             }
         }
 
-        GUI.enabled = true;
         UnityEngine.Debug.Log("IsDedicated " + IsDedicated);
         SceneManager.sceneLoaded += OnSceneWasLoaded;
     }

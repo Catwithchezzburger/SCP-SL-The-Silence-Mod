@@ -21,12 +21,10 @@ public class SimpleMenu : MonoBehaviour
 
     private void Awake()
     {
-#if !UNITY_EDITOR
         if (global::System.Linq.Enumerable.Any(StartupArgs.Args, (string arg) => arg.Equals("-nographics", global::System.StringComparison.OrdinalIgnoreCase)))
         {
             ServerStatic.IsDedicated = true;
         }
-#endif
         if (isPreloader)
         {
             return;
@@ -101,20 +99,13 @@ public class SimpleMenu : MonoBehaviour
 
     private static void Refresh()
     {
-        if (_server || ServerStatic.IsDedicated)
-        {
-            _targetSceneName = "FastMenu";
-        }
-        else
-        {
-            int mode = PlayerPrefsSl.Get("menumode", 1);
-            mode = Mathf.Clamp(mode, 0, 2);
-            _targetSceneName = MenuSceneNames[mode];
-        }
+        _targetSceneName = (_server ? "FastMenu" : MenuSceneNames[(!_forceSettings) ? 1 : global::UnityEngine.Mathf.Clamp(PlayerPrefsSl.Get("menumode", 1), 0, 2)]);
 
-        CustomNetworkManager customNetworkManager = UnityEngine.Object.FindFirstObjectByType<CustomNetworkManager>();
-        if (customNetworkManager != null)
-            customNetworkManager.offlineScene = _targetSceneName;
+        var netManager = global::UnityEngine.Object.FindFirstObjectByType<CustomNetworkManager>();
+        if (netManager != null)
+        {
+            netManager.offlineScene = _targetSceneName;
+        }
     }
 
     public static void LoadCorrectScene()
