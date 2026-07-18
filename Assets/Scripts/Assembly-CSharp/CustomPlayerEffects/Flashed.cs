@@ -72,6 +72,14 @@ namespace CustomPlayerEffects
             }
         }
 
+        public override void OnBeginSpectating()
+        {
+            if (Hub != null && IsEnabled && _processVolume != null)
+            {
+                _processVolume.enabled = true;
+            }
+        }
+
         protected override void Update()
         {
             base.Update();

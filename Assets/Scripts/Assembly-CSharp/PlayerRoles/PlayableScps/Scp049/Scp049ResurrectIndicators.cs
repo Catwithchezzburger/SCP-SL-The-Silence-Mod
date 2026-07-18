@@ -148,7 +148,11 @@ namespace PlayerRoles.PlayableScps.Scp049
 
         private void RefreshIndicator(Vector3 camPos, BasicRagdoll ragdoll)
         {
-            var ragdollPos = ragdoll.transform.position;
+            var centerPoint = ragdoll.CenterPoint;
+            if (centerPoint == null)
+                return;
+
+            var ragdollPos = centerPoint.position;
             var diff = camPos - ragdollPos;
             var sqrDist = diff.sqrMagnitude;
             var sqrVisible = _visibleDistance * _visibleDistance;
