@@ -51,8 +51,6 @@ public class GammaSlider : MonoBehaviour
         float savedValue = GuiToSaved(f);
         PlayerPrefsSl.Set(GammaConfigKey, savedValue);
 
-        Debug.Log($"[GammaSlider] SetValue gui={f} saved={savedValue} subscribers={(OnGammaChanged == null ? 0 : OnGammaChanged.GetInvocationList().Length)}");
-
         OnGammaChanged?.Invoke(savedValue);
     }
 }

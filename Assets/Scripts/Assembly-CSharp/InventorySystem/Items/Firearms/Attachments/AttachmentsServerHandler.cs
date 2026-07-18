@@ -29,7 +29,6 @@ namespace InventorySystem.Items.Firearms.Attachments
         {
             if (!global::Mirror.NetworkServer.active || !ReferenceHub.TryGetHub(conn.identity.gameObject, out var hub) || !(hub.inventory.CurInstance is global::InventorySystem.Items.Firearms.Firearm firearm) || hub.inventory.CurItem.SerialNumber != msg.WeaponSerial)
             {
-                FirearmLogger.Warn("ATTACH_CHANGE", $"serial={msg.WeaponSerial} REJECTED — bad state (server={NetworkServer.active})");
                 return;
             }
             bool flag = hub.roleManager.CurrentRole is global::PlayerRoles.Spectating.SpectatorRole;
@@ -46,9 +45,6 @@ namespace InventorySystem.Items.Firearms.Attachments
             }
             if (flag)
             {
-                FirearmLogger.Log("ATTACH_CHANGE",
-                    $"serial={msg.WeaponSerial} type={firearm.ItemTypeId} " +
-                    $"requestedCode={msg.AttachmentsCode} (bits={System.Convert.ToString(msg.AttachmentsCode, 2)})");
                 firearm.ApplyAttachmentsCode(msg.AttachmentsCode, reValidate: true);
                 if (firearm.Status.Ammo > firearm.AmmoManagerModule.MaxAmmo)
                 {
@@ -56,20 +52,12 @@ namespace InventorySystem.Items.Firearms.Attachments
                 }
                 firearm.Status = new global::InventorySystem.Items.Firearms.FirearmStatus((byte)global::UnityEngine.Mathf.Min(firearm.Status.Ammo, firearm.AmmoManagerModule.MaxAmmo), firearm.Status.Flags, msg.AttachmentsCode);
             }
-            else
-            {
-                FirearmLogger.Warn("ATTACH_CHANGE",
-                    $"serial={msg.WeaponSerial} REJECTED — not spectator and not at workstation");
-            }
         }
 
         private static void ServerReceivePreference(global::Mirror.NetworkConnection conn, global::InventorySystem.Items.Firearms.Attachments.AttachmentsSetupPreference msg)
         {
             if (global::Mirror.NetworkServer.active && ReferenceHub.TryGetHub(conn.identity.gameObject, out var hub))
             {
-                FirearmLogger.Log("ATTACH_PREF",
-                    $"weapon={msg.Weapon} code={msg.AttachmentsCode} (bits={System.Convert.ToString(msg.AttachmentsCode, 2)}) " +
-                    $"player={hub.PlayerId} existing={PlayerPreferences.ContainsKey(hub)}");
                 if (PlayerPreferences.TryGetValue(hub, out var value) && value != null)
                 {
                     value[msg.Weapon] = msg.AttachmentsCode;
@@ -100,11 +88,6 @@ namespace InventorySystem.Items.Firearms.Attachments
                     bit <<= 1;
                 }
 
-                FirearmLogger.Log("ATTACH_SETUP",
-                    $"serial={firearm.ItemSerial} type={firearm.ItemTypeId} " +
-                    $"hasPref={hasPref} rawCode={rawCode} validatedCode={value2} " +
-                    $"totalAttachments={firearm.Attachments.Length} " +
-                    $"enabled=[{sb.ToString().TrimEnd()}]");
 
                 firearm.ApplyAttachmentsCode(value2, reValidate: false);
 
@@ -121,14 +104,6 @@ namespace InventorySystem.Items.Firearms.Attachments
                     bool flag = firearm.HasAdvantageFlag(global::InventorySystem.Items.Firearms.Attachments.AttachmentDescriptiveAdvantages.Flashlight);
                     if (flag)
                         statusFlags |= global::InventorySystem.Items.Firearms.FirearmStatusFlags.FlashlightEnabled;
-                    FirearmLogger.Log("ATTACH_SETUP",
-                        $"serial={firearm.ItemSerial} loading from reserve: reserveAmmo={value3} loaded={num} " +
-                        $"remaining={(value3 - num)} flashlight={flag}");
-                }
-                else
-                {
-                    FirearmLogger.Log("ATTACH_SETUP",
-                        $"serial={firearm.ItemSerial} no reserve ammo for {firearm.AmmoType} — keeping current ammo={loadedAmmo} flags={statusFlags}");
                 }
                 var newStatus = new global::InventorySystem.Items.Firearms.FirearmStatus(loadedAmmo, statusFlags, value2);
                 firearm.Status = newStatus;

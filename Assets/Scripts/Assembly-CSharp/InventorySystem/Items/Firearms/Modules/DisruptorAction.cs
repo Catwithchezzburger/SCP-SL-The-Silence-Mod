@@ -180,8 +180,6 @@ namespace InventorySystem.Items.Firearms.Modules
             if (TimeSinceLastShot < ShotDelay + PostShotCooldown)
                 return ActionModuleResponse.Idle;
 
-            FirearmLogger.Log("DISRUPTOR_CLI",
-                $"serial={_firearm.ItemSerial} — charging shot, timeSinceLast={TimeSinceLastShot:F2}");
             NetworkClient.Send(new RequestMessage(_firearm.ItemSerial, RequestType.Reload));
 
             var vm = _firearm.ClientViewmodel;
@@ -200,24 +198,17 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (!_firearm.IsLocalPlayer && TimeSinceLastShot < PostShotCooldown)
             {
-                FirearmLogger.Warn("DISRUPTOR_SRV",
-                    $"serial={_firearm.ItemSerial} REJECTED — cooldown remaining={(PostShotCooldown - TimeSinceLastShot):F2}s");
                 return false;
             }
 
             if (_firearm.Status.Ammo <= 0)
             {
-                FirearmLogger.Warn("DISRUPTOR_SRV",
-                    $"serial={_firearm.ItemSerial} REJECTED — ammo=0, removing item");
                 _firearm.OwnerInventory.ServerRemoveItem(_firearm.ItemSerial, null);
                 return false;
             }
 
             if (!ModulesReady)
             {
-                FirearmLogger.Warn("DISRUPTOR_SRV",
-                    $"serial={_firearm.ItemSerial} REJECTED — modules not ready " +
-                    $"ammo={_firearm.AmmoManagerModule.Standby} equip={_firearm.EquipperModule.Standby} ads={_firearm.AdsModule.Standby}");
                 _firearm.Owner.gameConsoleTransmission.SendToClient(
                     _firearm.OwnerInventory.connectionToClient,
                     $"Shot rejected, ammoManager={_firearm.AmmoManagerModule.Standby}, " +
@@ -226,8 +217,6 @@ namespace InventorySystem.Items.Firearms.Modules
                 return false;
             }
 
-            FirearmLogger.Log("DISRUPTOR_SRV",
-                $"serial={_firearm.ItemSerial} AUTHORIZED ammo {_firearm.Status.Ammo}->{ _firearm.Status.Ammo - 1}");
 
             _firearm.Status = new FirearmStatus(
                 (byte)(_firearm.Status.Ammo - 1),

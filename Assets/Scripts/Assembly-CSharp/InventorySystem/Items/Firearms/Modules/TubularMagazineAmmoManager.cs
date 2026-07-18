@@ -168,15 +168,11 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (action == CurAction)
             {
-                FirearmLogger.Log("TUBE_SRV",
-                    $"serial={_serial} SKIP — already in action={action}");
                 return false;
             }
 
             if (CurAction != CurrentAction.Idle)
             {
-                FirearmLogger.Log("TUBE_SRV",
-                    $"serial={_serial} CANCEL current={CurAction} — switching to Idle");
                 CurAction = CurrentAction.Idle;
                 _cooldownStopwatch.Restart();
                 return true;
@@ -184,15 +180,11 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (!_firearm.EquipperModule.Standby || !_firearm.ActionModule.Standby)
             {
-                FirearmLogger.Log("TUBE_SRV",
-                    $"serial={_serial} SKIP {action} — equip={_firearm.EquipperModule.Standby} action={_firearm.ActionModule.Standby}");
                 return false;
             }
 
             if (_cooldownStopwatch.Elapsed.TotalSeconds < _cooldownTime)
             {
-                FirearmLogger.Log("TUBE_SRV",
-                    $"serial={_serial} SKIP {action} — cooldown remaining={(float)(_cooldownTime - _cooldownStopwatch.Elapsed.TotalSeconds):F2}s");
                 return false;
             }
 
@@ -201,20 +193,14 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (action == CurrentAction.Reloading && (currentAmmo >= MaxAmmo || curReserveAmmo == 0))
             {
-                FirearmLogger.Log("TUBE_SRV",
-                    $"serial={_serial} SKIP reload — ammo={currentAmmo} max={MaxAmmo} reserve={curReserveAmmo}");
                 return false;
             }
 
             if (action == CurrentAction.Unloading && currentAmmo <= 0)
             {
-                FirearmLogger.Log("TUBE_SRV",
-                    $"serial={_serial} SKIP unload — ammo=0");
                 return false;
             }
 
-            FirearmLogger.Log("TUBE_SRV",
-                $"serial={_serial} START {action} — ammo={currentAmmo} reserve={curReserveAmmo} max={MaxAmmo}");
             CurAction = action;
             return true;
         }
@@ -233,16 +219,12 @@ namespace InventorySystem.Items.Firearms.Modules
             {
                 if (newAction != CurAction)
                 {
-                    FirearmLogger.Log("TUBE_CLI",
-                        $"serial={_serial} — cancel current={CurAction}, switching to Idle");
                     if (!_firearm.IsSpectated)
                         CurAction = CurrentAction.Idle;
                 }
                 return;
             }
 
-            FirearmLogger.Log("TUBE_CLI",
-                $"serial={_serial} — starting {newAction}");
             if (!_firearm.IsSpectated)
                 CurAction = newAction;
         }
@@ -305,8 +287,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (toLoad <= 0)
             {
-                FirearmLogger.Log("TUBE_RELOAD",
-                    $"serial={_serial} — toLoad=0, stopping reload ammo={_firearm.Status.Ammo} max={MaxAmmo}");
                 CurAction = CurrentAction.Idle;
             }
         }
@@ -315,16 +295,12 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (_firearm.Status.Ammo <= 0)
             {
-                FirearmLogger.Log("TUBE_UNLOAD",
-                    $"serial={_serial} — ammo=0, stopping unload");
                 CurAction = CurrentAction.Idle;
             }
         }
 
         private void Holstered()
         {
-            FirearmLogger.Log("TUBE_HOLSTER",
-                $"serial={_serial} — holstered, action was={CurAction}");
             if (!_firearm.IsSpectated)
                 CurAction = CurrentAction.Idle;
 

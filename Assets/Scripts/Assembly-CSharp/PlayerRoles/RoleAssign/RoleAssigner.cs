@@ -45,7 +45,6 @@ namespace PlayerRoles.RoleAssign
 
         private static void OnRoundStarted()
         {
-            Debug.Log("[RoleAssigner] Event triggered! Loading spawn queue...");
             if (!global::Mirror.NetworkServer.active)
                 return;
 

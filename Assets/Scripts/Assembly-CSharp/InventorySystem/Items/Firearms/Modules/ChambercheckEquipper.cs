@@ -33,8 +33,6 @@ namespace InventorySystem.Items.Firearms.Modules
                 {
                     _stopwatch.Stop();
                     _allowInteraction = true;
-                    FirearmLogger.Log("CCE",
-                        $"serial={_firearm.ItemSerial} — draw timer done (equip #{_equips}), now ready");
                 }
                 return _allowInteraction;
             }
@@ -74,9 +72,6 @@ namespace InventorySystem.Items.Firearms.Modules
                 }
             }
 
-            FirearmLogger.Log("CCE",
-                $"serial={_firearm.ItemSerial} OnEquipped equip#{_equips} " +
-                $"targetTime={_targetTime:F2}s isFirst={_equips == 1} isLocal={_firearm.IsLocalPlayer}");
             _stopwatch.Restart();
 
             if (_firearm.IsLocalPlayer)

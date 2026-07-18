@@ -172,7 +172,6 @@ namespace PlayerRoles.PlayableScps.Scp106
 
         public static void PlayCooldownAnimation(double nextTime)
         {
-            UnityEngine.Debug.LogWarning($"[CDBAR] 106 PlayCooldownAnimation: singletonSet={_singletonSet} nextIn={(float)(nextTime - Mirror.NetworkTime.time):F2}");
             if (!_singletonSet)
                 return;
 

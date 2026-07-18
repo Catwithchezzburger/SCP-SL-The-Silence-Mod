@@ -94,27 +94,19 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (_isBusy || _firearm.Status.Ammo >= MaxAmmo)
             {
-                FirearmLogger.Log("CLIPMAG_SRV",
-                    $"serial={_firearm.ItemSerial} SKIP reload — busy={_isBusy} ammo={_firearm.Status.Ammo} max={MaxAmmo}");
                 return false;
             }
 
             if (!_firearm.EquipperModule.Standby || !_firearm.ActionModule.Standby)
             {
-                FirearmLogger.Log("CLIPMAG_SRV",
-                    $"serial={_firearm.ItemSerial} SKIP reload — equip={_firearm.EquipperModule.Standby} action={_firearm.ActionModule.Standby}");
                 return false;
             }
 
             if (UserAmmo == 0)
             {
-                FirearmLogger.Log("CLIPMAG_SRV",
-                    $"serial={_firearm.ItemSerial} SKIP reload — userAmmo=0");
                 return false;
             }
 
-            FirearmLogger.Log("CLIPMAG_SRV",
-                $"serial={_firearm.ItemSerial} START reload — ammo={_firearm.Status.Ammo} max={MaxAmmo} userAmmo={UserAmmo}");
             _isBusy = true;
             _busyStopwatch.Restart();
             _firearm.ServerSideAnimator.SetTrigger(_reloadTriggerHash);
@@ -127,20 +119,14 @@ namespace InventorySystem.Items.Firearms.Modules
             if (_isBusy || (_firearm.Status.Ammo == 0 &&
                 !_firearm.Status.Flags.HasFlagFast(FirearmStatusFlags.MagazineInserted)))
             {
-                FirearmLogger.Log("CLIPMAG_SRV",
-                    $"serial={_firearm.ItemSerial} SKIP unload — busy={_isBusy} ammo={_firearm.Status.Ammo} magIn={_firearm.Status.Flags.HasFlagFast(FirearmStatusFlags.MagazineInserted)}");
                 return false;
             }
 
             if (!_firearm.EquipperModule.Standby || !_firearm.ActionModule.Standby)
             {
-                FirearmLogger.Log("CLIPMAG_SRV",
-                    $"serial={_firearm.ItemSerial} SKIP unload — equip={_firearm.EquipperModule.Standby} action={_firearm.ActionModule.Standby}");
                 return false;
             }
 
-            FirearmLogger.Log("CLIPMAG_SRV",
-                $"serial={_firearm.ItemSerial} START unload — ammo={_firearm.Status.Ammo}");
             _isBusy = true;
             _busyStopwatch.Restart();
             _firearm.ServerSideAnimator.SetTrigger(_unloadTriggerHash);
@@ -150,8 +136,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
         public void ClientReload()
         {
-            FirearmLogger.Log("CLIPMAG_CLI",
-                $"serial={_firearm.ItemSerial} — trigger reload anim");
             if (_firearm.ClientViewmodel != null)
             {
                 _firearm.ClientViewmodel.AnimatorSetTrigger(_reloadTriggerHash);
@@ -163,8 +147,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
         public void ClientUnload()
         {
-            FirearmLogger.Log("CLIPMAG_CLI",
-                $"serial={_firearm.ItemSerial} — trigger unload anim");
             if (_firearm.ClientViewmodel != null)
             {
                 _firearm.ClientViewmodel.AnimatorSetTrigger(_unloadTriggerHash);
@@ -197,16 +179,12 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (isIdle)
             {
-                FirearmLogger.Log("CLIPMAG_BUSY",
-                    $"serial={_firearm.ItemSerial} — clearing busy (local={_firearm.IsLocalPlayer})");
                 _isBusy = false;
             }
         }
 
         private void ServerCancelReload()
         {
-            FirearmLogger.Log("CLIPMAG_CANCEL",
-                $"serial={_firearm.ItemSerial} — holstered, cancelling isBusy={_isBusy}");
             _isBusy = false;
             _busyStopwatch.Stop();
 

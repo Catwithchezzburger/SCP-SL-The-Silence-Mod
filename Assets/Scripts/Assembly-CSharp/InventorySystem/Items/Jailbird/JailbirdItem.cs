@@ -280,11 +280,9 @@ namespace InventorySystem.Items.Jailbird
         internal override void ServerProcessCmd(NetworkReader reader)
         {
             base.ServerProcessCmd(reader);
-            Debug.Log($"[JBDBG] ServerProcessCmd owner={Owner?.nicknameSync?.MyNick} broken={_broken} equipped={base.IsEquipped}");
             if (_broken || !base.IsEquipped) return;
 
             JailbirdMessageType msgType = (JailbirdMessageType)reader.ReadByte();
-            Debug.Log($"[JBDBG] msgType={msgType} serverAttackTriggered={_serverAttackTriggered} serverCharging={_serverCharging} tolerantReady={_serverAttackCooldown.TolerantIsReady}");
             switch (msgType)
             {
                 case JailbirdMessageType.AttackTriggered:

@@ -38,34 +38,10 @@ namespace InventorySystem.Items
             }
         }
 
-        private float _nextDiagTime;
-
         protected virtual void LateUpdate()
         {
             SwayController?.UpdateSway();
             AnimatedViewmodelBase.OnSwayUpdated?.Invoke();
-
-            if (_animator != null && Time.time >= _nextDiagTime)
-            {
-                _nextDiagTime = Time.time + 0.5f;
-                DumpAnimatorDiag("VM", _animator);
-                if (!DisableSharedHands && SharedHandsController.Singleton != null && SharedHandsController.Singleton.Hands != null)
-                    DumpAnimatorDiag("HANDS", SharedHandsController.Singleton.Hands);
-            }
-        }
-
-        private void DumpAnimatorDiag(string who, Animator anim)
-        {
-            var sb = new System.Text.StringBuilder();
-            sb.Append($"{who} '{anim.gameObject.name}' enabled={anim.enabled} activeInHierarchy={anim.gameObject.activeInHierarchy} speed={anim.speed:F2} ctrl={(anim.runtimeAnimatorController != null ? anim.runtimeAnimatorController.name : "NULL")} layers={anim.layerCount}");
-            for (int i = 0; i < anim.layerCount; i++)
-            {
-                var st = anim.GetCurrentAnimatorStateInfo(i);
-                var clips = anim.GetCurrentAnimatorClipInfo(i);
-                string clipName = clips.Length > 0 && clips[0].clip != null ? clips[0].clip.name : "none";
-                sb.Append($"\n    L{i} '{anim.GetLayerName(i)}' w={anim.GetLayerWeight(i):F2} clip={clipName} nt={st.normalizedTime:F3} len={st.length:F2} spd={st.speed:F2}x{st.speedMultiplier:F2}");
-            }
-            InventorySystem.Items.Firearms.FirearmLogger.Log("VM_DIAG", sb.ToString());
         }
 
         public override void InitAny()

@@ -105,14 +105,12 @@ namespace InventorySystem.Items.Jailbird
                 }
             }
             DetectDestructibles();
-            global::UnityEngine.Debug.Log($"[JBDBG] ServerAttack owner={_item.Owner.nicknameSync?.MyNick} isCharging={isCharging} camPos={_item.Owner.PlayerCameraReference.position} detected={_detectionsLen} backtracked={BacktrackedPlayers.Count}");
             global::UnityEngine.Vector3 forward = _item.Owner.PlayerCameraReference.forward;
             float num2 = (isCharging ? _damageCharge : _damageMelee);
             for (int i = 0; i < _detectionsLen; i++)
             {
                 IDestructible destructible = DetectedDestructibles[i];
                 bool damaged = destructible.Damage(num2, new global::PlayerStatsSystem.JailbirdDamageHandler(owner, num2, forward), destructible.CenterOfMass);
-                global::UnityEngine.Debug.Log($"[JBDBG] hit#{i} destructible={destructible} damaged={damaged}");
                 if (damaged)
                 {
                     result = true;
@@ -149,7 +147,6 @@ namespace InventorySystem.Items.Jailbird
             bool restoreHostHitboxes = NetworkServer.active && !_item.Owner.isLocalPlayer && HitboxIdentity.SetOwnHitboxes(hostHub, true);
 
             int num = global::UnityEngine.Physics.OverlapSphereNonAlloc(position, _hitregRadius, DetectedColliders, DetectionMask);
-            global::UnityEngine.Debug.Log($"[JBDBG] DetectDestructibles pos={position} radius={_hitregRadius} overlapCount={num} isServer={NetworkServer.active}");
             if (num != 0)
             {
                 DetectedNetIds.Clear();

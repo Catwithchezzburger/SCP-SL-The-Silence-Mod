@@ -95,12 +95,9 @@ namespace InventorySystem.Items.Firearms
         {
             if (_fa == null)
             {
-                FirearmLogger.Warn("VM_EQUIP", "OnEquipped — _fa is NULL, skipping UpdateAnims and TrackerShake");
                 return;
             }
 
-            FirearmLogger.Log("VM_EQUIP",
-                $"OnEquipped item={_fa.ItemTypeId} serial={_fa.ItemSerial} — calling UpdateAnims");
             _fa.UpdateAnims();
 
             var trackerShake = new TrackerShake(_cameraTrackerSource, _cameraTrackerOffset, _cameraTrackerIntensity);
@@ -120,22 +117,12 @@ namespace InventorySystem.Items.Firearms
 
             if (_fa != null)
             {
-                FirearmLogger.Log("VM_INIT",
-                    $"InitAny item={_fa.ItemTypeId} serial={_fa.ItemSerial} — subscribed OnShot/OnDryfired");
                 _fa.ViewModel = this;
                 _fa.OnShotCalled += OnShot;
                 _fa.OnDryfired += OnDryfired;
                 var animEvents = GetComponentInChildren<FirearmAnimatorEventsBase>(true);
                 if (animEvents != null)
                     animEvents.InitializeFirearm(_fa);
-                else
-                    FirearmLogger.Warn("VM_INIT",
-                        $"serial={_fa.ItemSerial} — no FirearmAnimatorEventsBase found in children");
-            }
-            else
-            {
-                FirearmLogger.Warn("VM_INIT",
-                    $"ParentItem is NOT a Firearm: {ParentItem?.GetType().Name ?? "null"}");
             }
         }
 
@@ -367,9 +354,6 @@ namespace InventorySystem.Items.Firearms
 
         protected virtual void OnShot()
         {
-            FirearmLogger.Log("VM_SHOT",
-                $"item={_fa?.ItemTypeId} serial={_fa?.ItemSerial} " +
-                $"randomize={_randomizeShootAnims} — setting Fire trigger");
 
             if (_randomizeShootAnims)
                 AnimatorSetFloat(FirearmAnimatorHashes.Random, Random.value);
@@ -382,8 +366,6 @@ namespace InventorySystem.Items.Firearms
 
         protected virtual void OnDryfired()
         {
-            FirearmLogger.Log("VM_DRY",
-                $"item={_fa?.ItemTypeId} serial={_fa?.ItemSerial} — setting DryFire trigger");
 
             AnimatorSetTrigger(FirearmAnimatorHashes.DryFire);
 

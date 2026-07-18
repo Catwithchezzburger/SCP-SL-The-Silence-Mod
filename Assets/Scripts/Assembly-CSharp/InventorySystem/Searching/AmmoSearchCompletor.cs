@@ -59,8 +59,6 @@ namespace InventorySystem.Searching
             uint current = CurrentAmmo;
             uint amountToAdd = Math.Min(current + ammoPickup.SavedAmmo, MaxAmmo) - current;
 
-            Debug.Log($"[AMMO_DIAG] Pickup {_ammoType}: reserveBefore={current} boxSavedAmmo={ammoPickup.SavedAmmo} limit={MaxAmmo} adding={amountToAdd} destroyBox={amountToAdd >= ammoPickup.SavedAmmo}");
-
             if (amountToAdd >= ammoPickup.SavedAmmo)
             {
                 TargetPickup.DestroySelf();

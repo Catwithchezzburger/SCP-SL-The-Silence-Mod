@@ -99,11 +99,6 @@ namespace InventorySystem.Items.Firearms
                 if (attachChanged)
                     AttachmentsUtils.ApplyAttachmentsCode(this, value.Attachments, reValidate: true);
 
-                FirearmLogger.Log("STATUS",
-                    $"serial={ItemSerial} type={ItemTypeId} " +
-                    $"ammo {prev.Ammo}->{value.Ammo} " +
-                    $"flags {prev.Flags}->{value.Flags} " +
-                    $"attach_changed={attachChanged}");
 
                 OnStatusChanged?.Invoke(prev, value);
                 _sendStatusNextFrame = true;
@@ -234,10 +229,6 @@ namespace InventorySystem.Items.Firearms
             {
                 if (pickup is FirearmPickup firearmPickup)
                 {
-                    FirearmLogger.Log("ADDED",
-                        $"serial={ItemSerial} type={ItemTypeId} src=FirearmPickup " +
-                        $"pickupAmmo={firearmPickup.Status.Ammo} pickupFlags={firearmPickup.Status.Flags} " +
-                        $"pickupAttachCode={firearmPickup.Status.Attachments} distributed={firearmPickup.Distributed}");
                     Status = new FirearmStatus(
                         firearmPickup.Status.Ammo,
                         firearmPickup.Status.Flags,
@@ -251,8 +242,6 @@ namespace InventorySystem.Items.Firearms
                         FirearmStatusFlags.None,
                         AttachmentsUtils.ValidateAttachmentsCode(this, 0u));
                     _refillAmmo = true;
-                    FirearmLogger.Log("ADDED",
-                        $"serial={ItemSerial} type={ItemTypeId} src=fresh ammo=0 flags=None refill=True");
                 }
                 _footprintValid = false;
             }
@@ -349,32 +338,19 @@ namespace InventorySystem.Items.Firearms
             {
                 case ActionModuleResponse.Shoot:
                     {
-                        FirearmLogger.Log("SHOOT",
-                            $"serial={ItemSerial} type={ItemTypeId} " +
-                            $"hitreg={HitregModule?.GetType().Name ?? "null"} hasVM={HasViewmodel}");
                         if (HitregModule != null &&
                             HitregModule.ClientCalculateHit(out ShotMessage msg))
                         {
                             msg.ShooterWeaponSerial = base.ItemSerial;
                             NetworkClient.Send(msg);
 
-                            FirearmLogger.Log("SHOOT",
-                                $"serial={ItemSerial} — calling OnWeaponShot " +
-                                $"(subscribers={OnShotCalled?.GetInvocationList()?.Length ?? 0})");
                             OnWeaponShot();
-                        }
-                        else
-                        {
-                            FirearmLogger.Warn("SHOOT",
-                                $"serial={ItemSerial} ClientCalculateHit FAILED — hitreg={HitregModule?.GetType().Name ?? "null"}");
                         }
                         break;
                     }
 
                 case ActionModuleResponse.Dry:
                     {
-                        FirearmLogger.Log("DRY",
-                            $"serial={ItemSerial} type={ItemTypeId} — sending Dryfire request");
                         NetworkClient.Send(
                             new RequestMessage(base.ItemSerial, RequestType.Dryfire));
 
@@ -398,8 +374,6 @@ namespace InventorySystem.Items.Firearms
 
         public override void OnEquipped()
         {
-            FirearmLogger.Log("EQUIP",
-                $"serial={ItemSerial} type={ItemTypeId} isLocal={IsLocalPlayer} isServer={NetworkServer.active}");
 
             _animator.enabled = true;
             _animator.Rebind();
@@ -417,8 +391,6 @@ namespace InventorySystem.Items.Firearms
 
         public override void OnHolstered()
         {
-            FirearmLogger.Log("HOLSTER",
-                $"serial={ItemSerial} type={ItemTypeId} isLocal={IsLocalPlayer}");
 
             OnHolsteredCalled?.Invoke();
             _animator.enabled = false;
@@ -542,8 +514,6 @@ namespace InventorySystem.Items.Firearms
         {
             if (_refillAmmo && AmmoManagerModule != null)
             {
-                FirearmLogger.Log("ACQUIRE",
-                    $"serial={ItemSerial} type={ItemTypeId} refill ammo to max={AmmoManagerModule.MaxAmmo}");
                 Status = new FirearmStatus(
                     AmmoManagerModule.MaxAmmo,
                     Status.Flags,
@@ -551,8 +521,6 @@ namespace InventorySystem.Items.Firearms
             }
             else
             {
-                FirearmLogger.Log("ACQUIRE",
-                    $"serial={ItemSerial} type={ItemTypeId} sending current status ammo={Status.Ammo}");
                 base.OwnerInventory.connectionToClient
                     .Send(new StatusMessage(base.ItemSerial, Status));
             }

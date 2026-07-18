@@ -166,31 +166,24 @@ namespace PlayerRoles.PlayableScps
         {
             int num = Physics.OverlapSphereNonAlloc(OverlapSphereOrigin, _detectionRadius, DetectionsNonAlloc, DetectionMask);
             _syncAttack = AttackResult.None;
-            // TODO(ATKDBG): временная диагностика melee-атак SCP — удалить после починки.
-            UnityEngine.Debug.LogWarning($"[ATKDBG] {GetType().Name} SrvAttack: origin={OverlapSphereOrigin} r={_detectionRadius} overlaps={num} targets={TargettedPlayers.Count}");
             for (int i = 0; i < num; i++)
             {
                 if (!DetectionsNonAlloc[i].TryGetComponent<IDestructible>(out var component))
                 {
-                    UnityEngine.Debug.LogWarning($"[ATKDBG]   skip '{DetectionsNonAlloc[i].name}': no IDestructible");
                     continue;
                 }
                 if (Physics.Linecast(PlyCam.position, component.CenterOfMass, BlockerMask))
                 {
-                    UnityEngine.Debug.LogWarning($"[ATKDBG]   skip '{DetectionsNonAlloc[i].name}': linecast blocked");
                     continue;
                 }
                 if (component is HitboxIdentity hitboxIdentity && !TargettedPlayers.Remove(hitboxIdentity.TargetHub))
                 {
-                    UnityEngine.Debug.LogWarning($"[ATKDBG]   skip '{DetectionsNonAlloc[i].name}': hub {hitboxIdentity.TargetHub?.PlayerId} not in TargettedPlayers");
                     continue;
                 }
                 if (!component.Damage(DamageAmount, DamageHandler, component.CenterOfMass))
                 {
-                    UnityEngine.Debug.LogWarning($"[ATKDBG]   skip '{DetectionsNonAlloc[i].name}': Damage() returned false");
                     continue;
                 }
-                UnityEngine.Debug.LogWarning($"[ATKDBG]   HIT '{DetectionsNonAlloc[i].name}' dmg={DamageAmount}");
 
                 OnDestructibleDamaged(component);
                 _syncAttack |= AttackResult.AttackedObject;
@@ -204,7 +197,6 @@ namespace PlayerRoles.PlayableScps
                     }
                 }
             }
-            UnityEngine.Debug.LogWarning($"[ATKDBG] {GetType().Name} SrvAttack result: {_syncAttack}");
             ServerSendRpc(toAll: true);
         }
 
@@ -243,8 +235,6 @@ namespace PlayerRoles.PlayableScps
                     }
                 }
             }
-            // TODO(ATKDBG): временная диагностика melee-атак SCP — удалить после починки.
-            UnityEngine.Debug.LogWarning($"[ATKDBG] {GetType().Name} CliCmd: pos={position} selfWp={selfRelative.WaypointId} wroteTargets={writtenTargets}");
         }
 
         public override void ServerProcessCmd(NetworkReader reader)
@@ -254,8 +244,6 @@ namespace PlayerRoles.PlayableScps
             
             if (relativePosition.WaypointId == 0)
             {
-                // TODO(ATKDBG): временная диагностика melee-атак SCP — удалить после починки.
-                UnityEngine.Debug.LogWarning($"[ATKDBG] {GetType().Name} SrvCmd: trigger packet (wp=0)");
                 _attackTriggered = true;
                 ServerSendRpc(toAll: true);
             }
@@ -263,7 +251,6 @@ namespace PlayerRoles.PlayableScps
             {
                 if (!_serverCooldown.TolerantIsReady && !base.Owner.isLocalPlayer)
                 {
-                    UnityEngine.Debug.LogWarning($"[ATKDBG] {GetType().Name} SrvCmd: rejected by server cooldown (remaining={_serverCooldown.Remaining:F2})");
                     return;
                 }
                 
@@ -284,8 +271,6 @@ namespace PlayerRoles.PlayableScps
                         TargettedPlayers.Add(referenceHub);
                     }
                 }
-                
-                UnityEngine.Debug.LogWarning($"[ATKDBG] {GetType().Name} SrvCmd: attack packet, claimedPos={position}, parsedTargets={TargettedPlayers.Count}");
 
                 // Listen-server only: the host player's own hitbox colliders are disabled
                 // (CharacterModel.SpawnObject -> SetColliders(!isLocalPlayer)), so the overlap
@@ -339,8 +324,6 @@ namespace PlayerRoles.PlayableScps
             }
             
             _syncAttack = (AttackResult)reader.ReadByte();
-            // TODO(ATKDBG): временная диагностика melee-атак SCP — удалить после починки.
-            UnityEngine.Debug.LogWarning($"[ATKDBG] {GetType().Name} CliRpc: result={_syncAttack}");
             this._onAttacked?.Invoke(_syncAttack);
             
             if (_syncAttack != AttackResult.None && (base.Owner.isLocalPlayer || SpectatorNetworking.IsLocallySpectated(base.Owner)))
@@ -420,7 +403,6 @@ namespace PlayerRoles.PlayableScps
             _attackTriggered = attackTriggered;
             _delaySw.Restart();
             _clientCooldown.Trigger(BaseCooldown);
-            UnityEngine.Debug.LogWarning($"[CDBAR] ClientPerformAttack: {GetType().Name} cd#{_clientCooldown.GetHashCode()} baseCd={BaseCooldown} isReadyAfterTrigger={_clientCooldown.IsReady} remaining={_clientCooldown.Remaining:F2}");
             base.ClientSendCmd();
             this._onTriggered?.Invoke();
         }

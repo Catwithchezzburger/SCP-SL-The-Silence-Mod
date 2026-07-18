@@ -202,9 +202,6 @@ namespace InventorySystem.Items.Firearms.Attachments
                 num *= 2;
             }
             string changes = sb.ToString().TrimEnd();
-            FirearmLogger.Log("ATTACH_APPLY",
-                $"serial={firearm.ItemSerial} type={firearm.ItemTypeId} code={code} reValidate={reValidate} " +
-                $"changes=[{(changes.Length > 0 ? changes : "none")}]");
 
             // Update viewmodel attachment objects after changing IsEnabled state
             if (firearm.Owner != null && firearm.HasViewmodel && firearm.ClientViewmodel != null)
@@ -247,9 +244,6 @@ namespace InventorySystem.Items.Firearms.Attachments
 
             global::NorthwoodLib.Pools.HashSetPool<global::InventorySystem.Items.Firearms.Attachments.AttachmentSlot>.Shared.Return(unassignedSlots);
 
-            FirearmLogger.Log("ATTACH_VALIDATE",
-                $"serial={firearm.ItemSerial} type={firearm.ItemTypeId} " +
-                $"inCode={code} outCode={result}");
             return result;
         }
 

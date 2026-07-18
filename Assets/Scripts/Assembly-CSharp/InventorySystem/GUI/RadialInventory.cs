@@ -27,9 +27,6 @@ namespace InventorySystem.GUI
                 _iconSlot.enabled = item != null;
                 if (item != null)
                 {
-                    if (item.Icon == null)
-                        InventorySystem.Items.Firearms.FirearmLogger.Log("ICON_DIAG",
-                            $"radial slot NULL icon for {item.ItemTypeId} ({item.GetType().Name})");
 
                     _iconSlot.texture = item.Icon;
                 }

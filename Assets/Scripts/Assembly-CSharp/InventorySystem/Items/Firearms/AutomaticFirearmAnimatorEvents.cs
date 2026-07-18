@@ -27,10 +27,6 @@ namespace InventorySystem.Items.Firearms
 
             byte toLoad = (byte)Mathf.Min(curAmmo, firearm.AmmoManagerModule.MaxAmmo - firearm.Status.Ammo);
 
-            FirearmLogger.Log("MAG_IN",
-                $"serial={firearm.ItemSerial} type={firearm.ItemTypeId} " +
-                $"userAmmo={curAmmo} toLoad={toLoad} " +
-                $"ammoBefore={firearm.Status.Ammo} ammoAfter={(byte)(firearm.Status.Ammo + toLoad)}");
 
             ModifyUserAmmo(-toLoad);
 
@@ -60,9 +56,6 @@ namespace InventorySystem.Items.Firearms
                 flags &= ~FirearmStatusFlags.MagazineInserted;
 
                 int returnToUser = firearm.Status.Ammo - chambered;
-                FirearmLogger.Log("MAG_OUT",
-                    $"serial={firearm.ItemSerial} type={firearm.ItemTypeId} " +
-                    $"ammo={firearm.Status.Ammo} chambered={chambered} returnToUser={returnToUser}");
 
                 ModifyUserAmmo(returnToUser);
 
@@ -70,11 +63,6 @@ namespace InventorySystem.Items.Firearms
                     (byte)chambered,
                     flags,
                     firearm.Status.Attachments);
-            }
-            else
-            {
-                FirearmLogger.Warn("MAG_OUT",
-                    $"serial={firearm.ItemSerial} — MagazineInserted flag NOT set, skipping");
             }
         }
 
@@ -87,9 +75,6 @@ namespace InventorySystem.Items.Firearms
             if (firearm == null)
                 return;
 
-            FirearmLogger.Log("MAG_OUT_OB",
-                $"serial={firearm.ItemSerial} type={firearm.ItemTypeId} " +
-                $"returning ammo={firearm.Status.Ammo} to user");
 
             ModifyUserAmmo(firearm.Status.Ammo);
 
@@ -113,9 +98,6 @@ namespace InventorySystem.Items.Firearms
             flags |= FirearmStatusFlags.Chambered;
             flags |= FirearmStatusFlags.Cocked;
 
-            FirearmLogger.Log("CHARGE",
-                $"serial={firearm.ItemSerial} type={firearm.ItemTypeId} " +
-                $"flags {firearm.Status.Flags}->{flags} ammo={firearm.Status.Ammo}");
 
             firearm.Status = new FirearmStatus(
                 firearm.Status.Ammo,
@@ -140,35 +122,20 @@ namespace InventorySystem.Items.Firearms
             {
                 if (firearm.AmmoManagerModule is AutomaticAmmoManager aam)
                 {
-                    FirearmLogger.Log("UNLOAD_CH",
-                        $"serial={firearm.ItemSerial} chambered={aam.ChamberedAmount} returning to user");
                     ModifyUserAmmo(aam.ChamberedAmount);
                 }
 
                 flags &= ~FirearmStatusFlags.Chambered;
                 flags |= FirearmStatusFlags.Cocked;
 
-                FirearmLogger.Log("UNLOAD_CH",
-                    $"serial={firearm.ItemSerial} flags {firearm.Status.Flags}->{flags}");
 
                 firearm.Status = new FirearmStatus(0, flags, firearm.Status.Attachments);
-            }
-            else
-            {
-                FirearmLogger.Log("UNLOAD_CH",
-                    $"serial={firearm.ItemSerial} skip — ammo={firearm.Status.Ammo} " +
-                    $"magIn={flags.HasFlagFast(FirearmStatusFlags.MagazineInserted)} " +
-                    $"chambered={flags.HasFlagFast(FirearmStatusFlags.Chambered)}");
             }
         }
 
         private void MarkAsEquipped()
         {
             Firearm firearm = TargetFirearm;
-            FirearmLogger.Log("ANIM_EQUIP",
-                $"MarkAsEquipped firearm={firearm?.ItemTypeId.ToString() ?? "NULL"} " +
-                $"isServer={IsServerController} " +
-                $"hasEventEquipper={firearm?.EquipperModule is EventBasedEquipper}");
             if (firearm == null)
                 return;
 

@@ -212,19 +212,6 @@ namespace InventorySystem.Items.Firearms.Modules
                 if (isTriggerPressed)
                 {
                     _hammerReady = true;
-                    FirearmLogger.Log("TRIGGER",
-                        $"serial={_firearm.ItemSerial} PRESSED " +
-                        $"ammo={predictedStatus.Ammo} flags={predictedStatus.Flags} " +
-                        $"modulesReady={ModulesReady} " +
-                        $"ammoStdby={_firearm.AmmoManagerModule.Standby} " +
-                        $"equipStdby={_firearm.EquipperModule.Standby} " +
-                        $"adsStdby={_firearm.AdsModule.Standby} " +
-                        $"lastShotTime={_lastShotTime:F3} cooldown={CooldownBetweenShots:F3}");
-                }
-                else
-                {
-                    FirearmLogger.Log("TRIGGER",
-                        $"serial={_firearm.ItemSerial} RELEASED — queuedShots={_queuedShots.Count}");
                 }
                 IsTriggerHeld = isTriggerPressed;
             }
@@ -272,15 +259,11 @@ namespace InventorySystem.Items.Firearms.Modules
                     {
                         if (_hasBoltLock && !predictedStatus.Flags.HasFlagFast(FirearmStatusFlags.Chambered))
                         {
-                            FirearmLogger.Log("DRY",
-                                $"serial={_firearm.ItemSerial} boltlock no chamber — trigger click");
                             ClientPlaySound(_triggerClip, false);
                             _hammerReady = false; // One click per trigger press, not continuous
                             return ActionModuleResponse.Idle;
                         }
 
-                        FirearmLogger.Log("DRY",
-                            $"serial={_firearm.ItemSerial} ammo={predictedStatus.Ammo} < consume={_ammoConsumption} — dryfire");
                         ClientPlaySound(_dryfireClip, false);
 
                         _hammerReady = false;
@@ -290,10 +273,6 @@ namespace InventorySystem.Items.Firearms.Modules
                         return ActionModuleResponse.Dry;
                     }
 
-                    FirearmLogger.Log("SHOT_CLIENT",
-                        $"serial={_firearm.ItemSerial} ammo={predictedStatus.Ammo} " +
-                        $"consume={_ammoConsumption} clipId={ShotClipId} " +
-                        $"usePattern={_usesRecoilPattern}");
 
                     ClientPlaySound(ShotClipId, true);
                     ClientModifyPredictedAmmo(-_ammoConsumption);
@@ -304,15 +283,6 @@ namespace InventorySystem.Items.Firearms.Modules
                     {
                         _recoilPattern.ApplyShot(CooldownBetweenShots);
                         shotRecoil = _recoilPattern.GetRecoil(_recoilSettings);
-                        FirearmLogger.Log("RECOIL",
-                            $"serial={_firearm.ItemSerial} pattern state={_recoilPattern.GetEstimatedState(CooldownBetweenShots):F2} " +
-                            $"upKick={shotRecoil.UpKick:F3} sideKick={shotRecoil.SideKick:F3}");
-                    }
-                    else
-                    {
-                        FirearmLogger.Log("RECOIL",
-                            $"serial={_firearm.ItemSerial} no pattern — direct shake " +
-                            $"upKick={shotRecoil.UpKick:F3} sideKick={shotRecoil.SideKick:F3}");
                     }
 
                     CameraShakeController.AddEffect(new RecoilShake(shotRecoil, _firearm));
@@ -336,8 +306,6 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (_firearm.Status.Ammo < _ammoConsumption)
             {
-                FirearmLogger.Warn("SRV_SHOT",
-                    $"serial={_firearm.ItemSerial} REJECTED — ammo={_firearm.Status.Ammo} < consume={_ammoConsumption}");
                 return false;
             }
 
@@ -346,11 +314,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (!ModulesReady)
             {
-                FirearmLogger.Warn("SRV_SHOT",
-                    $"serial={_firearm.ItemSerial} REJECTED — modules not ready " +
-                    $"ammoStdby={_firearm.AmmoManagerModule.Standby} " +
-                    $"equipStdby={_firearm.EquipperModule.Standby} " +
-                    $"adsStdby={_firearm.AdsModule.Standby}");
 
                 _firearm.Owner.gameConsoleTransmission.SendToClient(
                     $"Shot rejected, ammoManager={_firearm.AmmoManagerModule.Standby}, " +
@@ -368,9 +331,6 @@ namespace InventorySystem.Items.Firearms.Modules
             }
 
             byte newAmmo = (byte)(_firearm.Status.Ammo - _ammoConsumption);
-            FirearmLogger.Log("SRV_SHOT",
-                $"serial={_firearm.ItemSerial} AUTHORIZED " +
-                $"ammo {_firearm.Status.Ammo}->{newAmmo} flags={flags} clipId={ShotClipId}");
 
             _firearm.Status = new FirearmStatus(newAmmo, flags, _firearm.Status.Attachments);
             _firearm.ServerSendAudioMessage(ShotClipId);
@@ -382,8 +342,6 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if ((!ServerCheckFirerate() || _firearm.Status.Ammo != 0 || !ModulesReady) && !_firearm.IsLocalPlayer)
             {
-                FirearmLogger.Warn("SRV_DRY",
-                    $"serial={_firearm.ItemSerial} REJECTED — ammo={_firearm.Status.Ammo} modulesReady={ModulesReady}");
                 return false;
             }
 
@@ -391,15 +349,11 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (!flags.HasFlagFast(FirearmStatusFlags.Cocked))
             {
-                FirearmLogger.Warn("SRV_DRY",
-                    $"serial={_firearm.ItemSerial} REJECTED — not cocked flags={flags}");
                 return false;
             }
 
             flags &= ~FirearmStatusFlags.Cocked;
 
-            FirearmLogger.Log("SRV_DRY",
-                $"serial={_firearm.ItemSerial} AUTHORIZED clipId={_dryfireClip}");
 
             _firearm.Status = new FirearmStatus(0, flags, _firearm.Status.Attachments);
             _firearm.ServerSendAudioMessage(_dryfireClip);
@@ -415,8 +369,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (num < limit)
             {
-                FirearmLogger.Warn("FIRERATE",
-                    $"serial={_firearm.ItemSerial} TOO FAST — gap={num:F3} limit={limit:F3} cooldown={CooldownBetweenShots:F3}");
                 _firearm.OwnerInventory.connectionToClient.Send(new RefusedShotMessage());
                 return false;
             }

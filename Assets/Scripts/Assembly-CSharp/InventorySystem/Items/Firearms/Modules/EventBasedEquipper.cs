@@ -28,8 +28,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
                 _stopwatch.Stop();
                 _ready = true;
-                FirearmLogger.Log("EQUIPPER",
-                    $"serial={_firearm.ItemSerial} tolerance exceeded — now READY (elapsed={_stopwatch.Elapsed.TotalSeconds:F3}s)");
                 return true;
             }
         }
@@ -43,8 +41,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
         public void OnEquipped()
         {
-            FirearmLogger.Log("EQUIPPER",
-                $"serial={_firearm.ItemSerial} OnEquipped — resetting ready=false");
             _ready = false;
             _stopwatch.Stop();
         }
@@ -53,14 +49,10 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (_firearm.IsLocalPlayer)
             {
-                FirearmLogger.Log("EQUIPPER",
-                    $"serial={_firearm.ItemSerial} Equip() — local player, starting tolerance stopwatch");
                 _stopwatch.Restart();
             }
             else
             {
-                FirearmLogger.Log("EQUIPPER",
-                    $"serial={_firearm.ItemSerial} Equip() — non-local, instantly ready");
                 _ready = true;
             }
         }

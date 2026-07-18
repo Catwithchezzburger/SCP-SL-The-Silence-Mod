@@ -18,8 +18,6 @@ namespace InventorySystem.Items.Firearms.Modules
             ray = ServerRandomizeRay(ray);
             Quaternion rot = Hub.PlayerCameraReference.rotation;
 
-            FirearmLogger.Log("MULTISHOT",
-                $"serial={Firearm.ItemSerial} rays={_offsets.Length}");
 
             for (int i = 0; i < _offsets.Length; i++)
             {
@@ -37,9 +35,6 @@ namespace InventorySystem.Items.Firearms.Modules
                     Firearm.BaseStats.MaxDistance(),
                     StandardHitregBase.HitregMask);
 
-            FirearmLogger.Log("MULTISHOT_RAY",
-                $"serial={Firearm.ItemSerial} offset={offset} hit={hit}" +
-                (hit ? $" collider={hitInfo.collider.name} dist={hitInfo.distance:F1}" : ""));
 
             if (hit)
             {

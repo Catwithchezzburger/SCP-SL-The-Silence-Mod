@@ -98,27 +98,19 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (_isBusy || _firearm.Status.Ammo >= MaxAmmo)
             {
-                FirearmLogger.Log("SRV_RELOAD",
-                    $"serial={_firearm.ItemSerial} SKIP — busy={_isBusy} ammo={_firearm.Status.Ammo} max={MaxAmmo}");
                 return false;
             }
 
             if (!_firearm.EquipperModule.Standby || !_firearm.ActionModule.Standby)
             {
-                FirearmLogger.Log("SRV_RELOAD",
-                    $"serial={_firearm.ItemSerial} SKIP — equip={_firearm.EquipperModule.Standby} action={_firearm.ActionModule.Standby}");
                 return false;
             }
 
             if (UserAmmo < Mathf.Max(1, _chamberSize))
             {
-                FirearmLogger.Log("SRV_RELOAD",
-                    $"serial={_firearm.ItemSerial} SKIP — userAmmo={UserAmmo} < chamberSize={_chamberSize}");
                 return false;
             }
 
-            FirearmLogger.Log("SRV_RELOAD",
-                $"serial={_firearm.ItemSerial} START — ammo={_firearm.Status.Ammo} max={MaxAmmo} userAmmo={UserAmmo}");
             _isBusy = true;
             _busyStopwatch.Restart();
             _firearm.ServerSideAnimator.SetTrigger(_reloadTriggerHash);
@@ -130,20 +122,14 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (_isBusy || _firearm.Status.Ammo == 0)
             {
-                FirearmLogger.Log("SRV_UNLOAD",
-                    $"serial={_firearm.ItemSerial} SKIP — busy={_isBusy} ammo={_firearm.Status.Ammo}");
                 return false;
             }
 
             if (!_firearm.EquipperModule.Standby || !_firearm.ActionModule.Standby)
             {
-                FirearmLogger.Log("SRV_UNLOAD",
-                    $"serial={_firearm.ItemSerial} SKIP — equip={_firearm.EquipperModule.Standby} action={_firearm.ActionModule.Standby}");
                 return false;
             }
 
-            FirearmLogger.Log("SRV_UNLOAD",
-                $"serial={_firearm.ItemSerial} START — ammo={_firearm.Status.Ammo}");
             _isBusy = true;
             _busyStopwatch.Restart();
             _firearm.ServerSideAnimator.SetTrigger(_unloadTriggerHash);
@@ -153,8 +139,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
         public void ClientReload()
         {
-            FirearmLogger.Log("CLI_RELOAD",
-                $"serial={_firearm.ItemSerial} — trigger reload anim hasVM={_firearm.ClientViewmodel != null}");
             if (_firearm.ClientViewmodel != null)
                 _firearm.ClientViewmodel.AnimatorSetTrigger(_reloadTriggerHash);
 
@@ -164,8 +148,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
         public void ClientUnload()
         {
-            FirearmLogger.Log("CLI_UNLOAD",
-                $"serial={_firearm.ItemSerial} — trigger unload anim hasVM={_firearm.ClientViewmodel != null}");
             if (_firearm.ClientViewmodel != null)
                 _firearm.ClientViewmodel.AnimatorSetTrigger(_unloadTriggerHash);
 
@@ -204,16 +186,12 @@ namespace InventorySystem.Items.Firearms.Modules
 
             if (shouldReset)
             {
-                FirearmLogger.Log("AMMO_BUSY",
-                    $"serial={_firearm.ItemSerial} — animator returned to Idle, clearing busy");
                 _isBusy = false;
             }
         }
 
         private void CancelReload()
         {
-            FirearmLogger.Log("AMMO_CANCEL",
-                $"serial={_firearm.ItemSerial} — holstered, cancelling reload isBusy={_isBusy}");
             _isBusy = false;
             _busyStopwatch.Stop();
 

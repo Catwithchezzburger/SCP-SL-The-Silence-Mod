@@ -42,9 +42,6 @@ namespace InventorySystem.Items.Firearms.Modules
                 RecoilPattern.ApplyShot(1f / Firearm.ActionModule.CyclicRate);
                 num += RecoilPattern.GetInaccuracy();
             }
-            FirearmLogger.Log("INACCURACY",
-                $"serial={Firearm.ItemSerial} spread={num:F3} ads={Firearm.AdsModule.ServerAds} " +
-                $"speed={vector2.magnitude:F2} grounded={isGrounded} pattern={_usesRecoilPattern}");
             ray.direction = global::UnityEngine.Quaternion.Euler(num * vector) * ray.direction;
             return ray;
         }
@@ -55,8 +52,6 @@ namespace InventorySystem.Items.Firearms.Modules
             {
                 float damage = Firearm.BaseStats.DamageAtDistance(Firearm, hit.distance);
                 bool didDamage = component.Damage(damage, new global::PlayerStatsSystem.FirearmDamageHandler(Firearm, damage), hit.point);
-                FirearmLogger.Log("DAMAGE",
-                    $"serial={Firearm.ItemSerial} target={component.NetworkId} dist={hit.distance:F1} dmg={damage:F1} didDamage={didDamage} collider={hit.collider.name}");
                 if (didDamage)
                 {
                     if (!ReferenceHub.TryGetHubNetID(component.NetworkId, out var hub) || !hub.playerEffectsController.GetEffect<global::CustomPlayerEffects.Invisible>().IsEnabled)
@@ -69,8 +64,6 @@ namespace InventorySystem.Items.Firearms.Modules
             }
             else
             {
-                FirearmLogger.Log("DAMAGE",
-                    $"serial={Firearm.ItemSerial} hit wall/object collider={hit.collider.name} — no damage");
                 PlaceBulletholeDecal(ray, hit);
             }
             if (global::InventorySystem.Items.Firearms.Modules.StandardHitregBase.DebugMode)
@@ -84,9 +77,6 @@ namespace InventorySystem.Items.Firearms.Modules
             ray = ServerRandomizeRay(ray);
             global::InventorySystem.Items.Firearms.FirearmBaseStats baseStats = Firearm.BaseStats;
             bool hit = global::UnityEngine.Physics.Raycast(ray, out var hitInfo, baseStats.MaxDistance(), global::InventorySystem.Items.Firearms.Modules.StandardHitregBase.HitregMask);
-            FirearmLogger.Log("RAYCAST",
-                $"serial={Firearm.ItemSerial} origin={ray.origin} dir={ray.direction} maxDist={baseStats.MaxDistance():F1} hit={hit}" +
-                (hit ? $" collider={hitInfo.collider.name} dist={hitInfo.distance:F1}" : ""));
             if (hit)
             {
                 ServerProcessRaycastHit(ray, hitInfo);

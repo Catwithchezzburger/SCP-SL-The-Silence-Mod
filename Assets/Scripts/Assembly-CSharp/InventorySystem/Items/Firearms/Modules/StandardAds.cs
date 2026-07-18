@@ -223,9 +223,6 @@ namespace InventorySystem.Items.Firearms.Modules
             if (_prevState != _state)
             {
                 _prevState = _state;
-                FirearmLogger.Log("ADS",
-                    $"serial={_serial} state changed → {(_state ? "ADS_IN" : "ADS_OUT")} " +
-                    $"curAds={_curAds:F3} forceDisabled={ForceDisabled}");
                 NetworkClient.Send(new RequestMessage
                 {
                     Serial = _serial,

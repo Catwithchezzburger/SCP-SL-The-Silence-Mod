@@ -96,15 +96,10 @@ namespace InventorySystem.Items.Firearms.Modules
                 message.TargetPosition = relativePosition;
                 message.TargetRotation = WaypointBase.GetRelativeRotation(relativePosition.WaypointId, value.transform.rotation);
 
-                FirearmLogger.Log("HITREG_CLI",
-                    $"target netId={value.netId} name={value.name} " +
-                    $"raycast={raycastHit} hitDestructible={hitDestructible}");
             }
             else
             {
                 message.TargetNetId = 0u;
-                FirearmLogger.Log("HITREG_CLI",
-                    $"no target — raycast={raycastHit} hitDestructible={hitDestructible} bestDot={bestDot:F3}");
             }
 
             RelativePosition shooterPos = new RelativePosition(position);
@@ -118,8 +113,6 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (!WaypointBase.TryGetWaypoint(message.ShooterPosition.WaypointId, out WaypointBase wp))
             {
-                FirearmLogger.Warn("HITREG_SRV",
-                    $"shooter waypointId={message.ShooterPosition.WaypointId} NOT FOUND");
                 return;
             }
 
@@ -130,8 +123,6 @@ namespace InventorySystem.Items.Firearms.Modules
 
             using (FpcBacktracker fpcBacktracker = new FpcBacktracker(Hub, worldspacePosition, worldspaceRotation))
             {
-                FirearmLogger.Log("HITREG_SRV",
-                    $"shooter moved {fpcBacktracker.MoveAmount:F2}m targetNetId={message.TargetNetId}");
 
                 bool hasTarget = ReferenceHub.TryGetHubNetID(message.TargetNetId, out ReferenceHub targetHub);
                 FpcBacktracker targetBacktracker = null;
@@ -145,18 +136,11 @@ namespace InventorySystem.Items.Firearms.Modules
                     targetBacktracker = new FpcBacktracker(targetHub, wp2.GetWorldspacePosition(message.TargetPosition.Relative));
                     targetTransform.rotation = wp2.GetWorldspaceRotation(message.TargetRotation);
 
-                    FirearmLogger.Log("HITREG_SRV",
-                        $"target={targetHub.PlayerId} moved {targetBacktracker.MoveAmount:F2}m");
 
                     if (targetHub.isLocalPlayer)
                     {
                         SetHitboxes(targetHub, state: true);
                     }
-                }
-                else if (message.TargetNetId != 0)
-                {
-                    FirearmLogger.Warn("HITREG_SRV",
-                        $"target netId={message.TargetNetId} not found or waypoint missing");
                 }
 
                 PrimaryTargetNetId = message.TargetNetId;

@@ -180,16 +180,12 @@ namespace InventorySystem.Items.Firearms.Modules
             ActionModuleResponse result;
             if (LastFiredAmount > 0)
             {
-                FirearmLogger.Log("PUMP_SHOT",
-                    $"serial={_serial} fired={LastFiredAmount} chambered={ChamberedRounds} ammo={PredictedStatus.Ammo}");
                 var recoilShake = new RecoilShake(_recoil, _firearm, LastFiredAmount * LastFiredAmount);
                 CameraShakeController.AddEffect(recoilShake);
                 result = ActionModuleResponse.Shoot;
             }
             else
             {
-                FirearmLogger.Log("PUMP_DRY",
-                    $"serial={_serial} — cockedClick={anyCockedClick} chambered={ChamberedRounds} ammo={PredictedStatus.Ammo}");
                 int clipId = anyCockedClick ? _dryfireClip : _triggerClip;
                 if (_firearm.AudioClips != null && clipId >= 0 && clipId < _firearm.AudioClips.Length)
                 {
@@ -221,15 +217,11 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (ChamberedRounds > 0 || CockedHammers <= 0)
             {
-                FirearmLogger.Warn("PUMP_SRV_DRY",
-                    $"serial={_serial} REJECTED — chambered={ChamberedRounds} cocked={CockedHammers}, resyncing");
                 ServerResync();
                 return false;
             }
 
             CockedHammers -= Mathf.Min(CockedHammers, AmmoUsage);
-            FirearmLogger.Log("PUMP_SRV_DRY",
-                $"serial={_serial} OK — cockedLeft={CockedHammers}");
             _firearm.ServerSendAudioMessage((byte)_dryfireClip);
             return true;
         }
@@ -238,8 +230,6 @@ namespace InventorySystem.Items.Firearms.Modules
         {
             if (ChamberedRounds == 0 || _firearm.Status.Ammo == 0)
             {
-                FirearmLogger.Warn("PUMP_SRV_SHOT",
-                    $"serial={_serial} REJECTED — chambered={ChamberedRounds} ammo={_firearm.Status.Ammo}, resyncing");
                 ServerResync();
                 return false;
             }
@@ -247,8 +237,6 @@ namespace InventorySystem.Items.Firearms.Modules
             if (_lastShotStopwatch.Elapsed.TotalSeconds < TimeBetweenShots ||
                 _pumpStopwatch.Elapsed.TotalSeconds < PumpingTime)
             {
-                FirearmLogger.Warn("PUMP_SRV_SHOT",
-                    $"serial={_serial} REJECTED — shotGap={_lastShotStopwatch.Elapsed.TotalSeconds:F2} pumpGap={_pumpStopwatch.Elapsed.TotalSeconds:F2}");
                 return false;
             }
 
@@ -277,16 +265,12 @@ namespace InventorySystem.Items.Firearms.Modules
 
                 if (ChamberedRounds == 0 && _firearm.Status.Ammo > 0 && !_firearm.IsLocalPlayer)
                 {
-                    FirearmLogger.Log("PUMP_SRV_SHOT",
-                        $"serial={_serial} — chambered empty, triggering pump anim");
                     _pumpStopwatch.Restart();
                     _firearm.AnimSetTrigger(_pumpAnimHash);
                     break;
                 }
             }
 
-            FirearmLogger.Log("PUMP_SRV_SHOT",
-                $"serial={_serial} fired={LastFiredAmount} ammoLeft={_firearm.Status.Ammo} chamberedLeft={ChamberedRounds}");
             return result;
         }
 
@@ -306,8 +290,6 @@ namespace InventorySystem.Items.Firearms.Modules
             CockedHammers = _chambersNumber;
             ChamberedRounds = Mathf.Min(currentAmmo, _chambersNumber);
 
-            FirearmLogger.Log("PUMP",
-                $"serial={_serial} — ammo={currentAmmo} chambered={ChamberedRounds} cocked={CockedHammers} sendToClients={sendToClients}");
 
             if (NetworkServer.active)
             {

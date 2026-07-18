@@ -78,10 +78,6 @@ namespace InventorySystem.Items.Firearms.Modules
             float inaccuracy = Firearm.BaseStats.GetInaccuracy(Firearm, Firearm.AdsModule.ServerAds, movementSpeed, isGrounded)
                 * TotalInaccuracyScale;
 
-            FirearmLogger.Log("BUCKSHOT",
-                $"serial={Firearm.ItemSerial} pellets={_buckshotSettings.PredefinedPellets.Length} " +
-                $"volleys={LastFiredAmount} inaccuracy={inaccuracy:F3} " +
-                $"scale={BuckshotScale:F3} ads={Firearm.AdsModule.ServerAds}");
 
             Vector2 offsetVector = (new Vector2(UnityEngine.Random.value, UnityEngine.Random.value) - Vector2.one / 2f).normalized
                 * UnityEngine.Random.value * inaccuracy;
@@ -103,8 +99,6 @@ namespace InventorySystem.Items.Firearms.Modules
                 totalDamage += ApplyHits(hit.Key, hit.Value);
             }
 
-            FirearmLogger.Log("BUCKSHOT",
-                $"serial={Firearm.ItemSerial} totalDamage={totalDamage:F1} targets hit={Hits.Count}");
 
             if (totalDamage > 0f)
             {

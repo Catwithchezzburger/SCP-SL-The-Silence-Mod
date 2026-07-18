@@ -19,10 +19,6 @@ namespace InventorySystem.Items.Firearms
 
         public static void AnimSetInt(this Firearm fa, int hash, int i)
         {
-            FirearmLogger.Log("ANIM",
-                $"serial={fa.ItemSerial} SetInt hash={hash} val={i} " +
-                $"srv={NetworkServer.active && fa.ServerSideAnimator != null} " +
-                $"vm={fa.HasViewmodel && fa.ClientViewmodel != null}");
             if (NetworkServer.active && fa.ServerSideAnimator != null)
                 fa.ServerSideAnimator.SetInteger(hash, i);
 
@@ -32,10 +28,6 @@ namespace InventorySystem.Items.Firearms
 
         public static void AnimSetFloat(this Firearm fa, int hash, float f)
         {
-            FirearmLogger.Log("ANIM",
-                $"serial={fa.ItemSerial} SetFloat hash={hash} val={f:F3} " +
-                $"srv={NetworkServer.active && fa.ServerSideAnimator != null} " +
-                $"vm={fa.HasViewmodel && fa.ClientViewmodel != null}");
             if (NetworkServer.active && fa.ServerSideAnimator != null)
                 fa.ServerSideAnimator.SetFloat(hash, f);
 
@@ -45,10 +37,6 @@ namespace InventorySystem.Items.Firearms
 
         public static void AnimSetBool(this Firearm fa, int hash, bool b)
         {
-            FirearmLogger.Log("ANIM",
-                $"serial={fa.ItemSerial} SetBool hash={hash} val={b} " +
-                $"srv={NetworkServer.active && fa.ServerSideAnimator != null} " +
-                $"vm={fa.HasViewmodel && fa.ClientViewmodel != null}");
             if (NetworkServer.active && fa.ServerSideAnimator != null)
                 fa.ServerSideAnimator.SetBool(hash, b);
 
@@ -58,10 +46,6 @@ namespace InventorySystem.Items.Firearms
 
         public static void AnimSetTrigger(this Firearm fa, int hash)
         {
-            FirearmLogger.Log("ANIM",
-                $"serial={fa.ItemSerial} SetTrigger hash={hash} " +
-                $"srv={NetworkServer.active && fa.ServerSideAnimator != null} " +
-                $"vm={fa.HasViewmodel && fa.ClientViewmodel != null}");
             if (NetworkServer.active && fa.ServerSideAnimator != null)
                 fa.ServerSideAnimator.SetTrigger(hash);
 
@@ -73,8 +57,6 @@ namespace InventorySystem.Items.Firearms
         {
             if (firearm == null || firearm.AudioClips == null || clipId >= firearm.AudioClips.Length)
             {
-                FirearmLogger.Warn("SRV_AUDIO",
-                    $"serial={firearm?.ItemSerial} clipId={clipId} — SKIP (null or out of range, clips={firearm?.AudioClips?.Length ?? -1})");
                 return;
             }
 
@@ -89,10 +71,6 @@ namespace InventorySystem.Items.Firearms
             if (elevated)
                 maxDistance *= 2.3f;
 
-            FirearmLogger.Log("SRV_AUDIO",
-                $"serial={firearm.ItemSerial} clipId={clipId} " +
-                $"maxDist={maxDistance:F1} elevated={elevated} " +
-                $"isGunshot={clip.HasFlag(FirearmAudioFlags.IsGunshot)}");
 
             float sqrMaxDistance = maxDistance * maxDistance;
             int sentCount = 0;
@@ -117,8 +95,6 @@ namespace InventorySystem.Items.Firearms
                 sentCount++;
             }
 
-            FirearmLogger.Log("SRV_AUDIO",
-                $"serial={firearm.ItemSerial} clipId={clipId} — sent to {sentCount} clients");
 
             ServerSoundPlayed?.Invoke(firearm, clipId, maxDistance);
         }

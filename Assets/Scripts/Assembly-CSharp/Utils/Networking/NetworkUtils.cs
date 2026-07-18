@@ -1,8 +1,6 @@
 using Mirror;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace Utils.Networking
@@ -46,37 +44,6 @@ namespace Utils.Networking
                         conn.Send(msg, channelId);
                     }
                 }
-            }
-        }
-
-        public static void DumpHandlers()
-        {
-            var field = typeof(NetworkServer).GetField("handlers", BindingFlags.Static | BindingFlags.NonPublic);
-            var handlers = (Dictionary<ushort, NetworkMessageDelegate>)field.GetValue(null);
-
-            Debug.Log($"<color=cyan>[NetworkTable]</color> ����� ���������: {handlers.Count}");
-
-            foreach (var kvp in handlers)
-            {
-                string messageTypeName = "UnknownMessage";
-
-                try
-                {
-                    var target = kvp.Value.Target;
-                    if (target != null)
-                    {
-                        var method = target.GetType().GetMethod("Invoke");
-                        var genericTypes = target.GetType().BaseType?.GetGenericArguments();
-
-                        if (genericTypes != null && genericTypes.Length > 0)
-                            messageTypeName = genericTypes[0].Name;
-                        else
-                            messageTypeName = target.GetType().Name;
-                    }
-                }
-                catch { }
-
-                Debug.Log($"<b>ID: {kvp.Key}</b> �> ���: <color=yellow>{messageTypeName}</color>");
             }
         }
     }
