@@ -2,9 +2,9 @@
   "appnews": {
     "newsitems": [
       {
-        "title": "Первое обновление нашего форка!",
-        "date": 1784382000,
-        "contents": "[h1]Мы запустили свой server новостей![/h1][p]Официальные посты от Northwood успешно отключены. Теперь здесь будут публиковаться только важные изменения нашей команды.[/p][p]Что уже сделано:\n• Добавлен двухсторонний шейдер для мешей\n• Очищен главный экран от плашек беты\n• Настроена синхронизация с Git[/p]",
+        "title": "DEVELOPMENT 0.1.0",
+        "date": 1784376000,
+        "contents": "[h2]Hello everyone![/h2][p]First ever version of the mod![/p][h3]Changelog[/h3][p]• Added new props into some Entrance[/p][p]Expect more updates soon![br]~ Catwithchezzburger, and his team.[/p]",
         "url": "https://github.com"
       }
     ]
