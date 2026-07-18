@@ -304,7 +304,7 @@ public class TeslaGate : NetworkBehaviour
             GameObject killer = killers[i];
             if (killer != null)
             {
-                int hitCount = Physics.OverlapBoxNonAlloc(killer.transform.position, sizeOfKiller / 2f, _colls, killer.transform.rotation, killerMask);
+                int hitCount = Physics.OverlapBoxNonAlloc(killer.transform.position + Vector3.up * (sizeOfKiller.y / 2f), sizeOfKiller / 2f, _colls, Quaternion.identity, killerMask);
 
                 for (int j = 0; j < hitCount; j++)
                 {
@@ -352,7 +352,7 @@ public class TeslaGate : NetworkBehaviour
             foreach (var killer in killers)
             {
                 if (killer != null)
-                    Gizmos.DrawCube(killer.transform.position, sizeOfKiller);
+                    Gizmos.DrawCube(killer.transform.position + Vector3.up * (sizeOfKiller.y / 2f), sizeOfKiller);
             }
             Gizmos.color = new Color(1f, 1f, 0f, 0.2f);
             Gizmos.DrawSphere(Position, sizeOfTrigger);
