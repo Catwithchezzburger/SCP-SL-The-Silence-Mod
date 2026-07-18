@@ -34,7 +34,7 @@ namespace InventorySystem.Items.Firearms
 
         private const float UnloadTime = 0.6f;
 
-        private readonly Stopwatch _unloadStopwatch = new Stopwatch();
+        private readonly Stopwatch _unloadStopwatch = new();
 
         private KeyCode _fireKey;
         private KeyCode _adsKey;
@@ -272,6 +272,15 @@ namespace InventorySystem.Items.Firearms
                 _toggleFlashlightKey = NewInput.GetKey(ActionName.ToggleFlashlight, KeyCode.T);
 
                 FirearmBasicMessagesHandler.OnStatusMessageReceived += ProcessReceivedStatus;
+                if (!NetworkServer.active
+                    && FirearmBasicMessagesHandler.ReceivedStatuses != null
+                    && FirearmBasicMessagesHandler.ReceivedStatuses.TryGetValue(base.ItemSerial, out FirearmStatus pendingStatus))
+                {
+                    Status = new FirearmStatus(
+                        pendingStatus.Ammo,
+                        pendingStatus.Flags,
+                        AttachmentsUtils.ValidateAttachmentsCode(this, pendingStatus.Attachments));
+                }
             }
         }
 

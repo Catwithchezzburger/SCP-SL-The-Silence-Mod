@@ -23,7 +23,9 @@ namespace PlayerRoles.Voice
 
         public override VoiceChatChannel ValidateReceive(ReferenceHub sp, VoiceChatChannel ch)
         {
-            if (base.Owner.isLocalPlayer)
+            // Server build guards its own (dead) host hub here; the client build has no
+            // isLocalPlayer check at all, so a playing listen-host must still receive.
+            if (base.Owner.isLocalPlayer && ServerStatic.IsDedicated)
             {
                 return VoiceChatChannel.None;
             }

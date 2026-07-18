@@ -29,14 +29,25 @@ namespace InventorySystem.Items.Usables
         public override void InitSpectator(ReferenceHub ply, ItemIdentifier id, bool wasEquipped)
         {
             base.InitSpectator(ply, id, wasEquipped);
-            InitAny();
+            OnEquipped();
 
             UsableItemsController.OnClientStatusReceived += HandleMessage;
 
-            if (wasEquipped)
+            if (!wasEquipped)
+                return;
+
+            _equipSoundSource?.Stop();
+
+            if (UsableItemsController.StartTimes.TryGetValue(id.SerialNumber, out float startTime))
             {
-                _equipSoundSource?.Stop();
+                // Target is mid-use: enter the use animation and fast-forward it by the
+                // time already elapsed so the spectator view catches up.
                 AnimatorSetBool(UseAnimHash, true);
+                AnimatorForceUpdate(Time.timeSinceLevelLoad - startTime, false);
+            }
+            else
+            {
+                // Item merely equipped: skip only the equip animation.
                 AnimatorForceUpdate(SkipEquipTime, true);
             }
         }

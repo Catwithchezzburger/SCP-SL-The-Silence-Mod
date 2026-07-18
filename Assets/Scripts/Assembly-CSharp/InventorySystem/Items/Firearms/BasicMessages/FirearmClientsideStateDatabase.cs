@@ -14,6 +14,8 @@ namespace InventorySystem.Items.Firearms.BasicMessages
 
 		private static readonly Dictionary<ushort, bool> AdsTracker = new Dictionary<ushort, bool>();
 
+        private static readonly Dictionary<ushort, int> EquipCounts = new Dictionary<ushort, int>();
+
         [global::UnityEngine.RuntimeInitializeOnLoadMethod]
         private static void Init()
         {
@@ -22,6 +24,7 @@ namespace InventorySystem.Items.Firearms.BasicMessages
                 HandleItemChange(cur);
             };
             global::InventorySystem.Items.Firearms.BasicMessages.FirearmBasicMessagesHandler.OnClientConfirmationReceived += HandleMessage;
+            global::InventorySystem.Inventory.OnLocalClientStarted += EquipCounts.Clear;
         }
 
         private static void HandleMessage(global::InventorySystem.Items.Firearms.BasicMessages.RequestMessage msg)
@@ -44,6 +47,20 @@ namespace InventorySystem.Items.Firearms.BasicMessages
         {
             AdsTracker[newItem.SerialNumber] = false;
             ReloadTracker[newItem.SerialNumber] = global::InventorySystem.Items.Firearms.BasicMessages.RequestType.ReloadStop;
+
+            if (newItem.SerialNumber != 0)
+            {
+                EquipCounts.TryGetValue(newItem.SerialNumber, out int count);
+                EquipCounts[newItem.SerialNumber] = count + 1;
+            }
+        }
+
+        // True while the serial is on its first-ever observed equip. Spectator viewmodels are
+        // recreated on every item switch, so they cannot track "first time pickup" locally —
+        // this client-wide counter (fed by Inventory.OnCurrentItemChanged for every hub) can.
+        public static bool IsFirstEquip(ushort serial)
+        {
+            return !EquipCounts.TryGetValue(serial, out int count) || count <= 1;
         }
 
 

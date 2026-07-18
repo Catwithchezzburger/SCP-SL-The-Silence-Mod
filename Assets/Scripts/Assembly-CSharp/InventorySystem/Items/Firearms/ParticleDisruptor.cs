@@ -97,12 +97,6 @@ namespace InventorySystem.Items.Firearms
 
         private void TryRemove()
         {
-            // Only cull an empty disruptor once acquisition has been confirmed.
-            // For remote clients ServerConfirmAcqusition (which refills ammo to
-            // MaxAmmo) is deferred until the client's CmdConfirmAcquisition arrives,
-            // so a freshly-granted disruptor still reads Ammo==0 on the next server
-            // frame. Without this guard it would self-remove before the ammo refill,
-            // meaning the item never actually reaches non-host players.
             if (global::Mirror.NetworkServer.active && Status.Ammo <= 0 && AcquisitionAlreadyReceived)
             {
                 base.OwnerInventory.ServerRemoveItem(base.ItemSerial, null);

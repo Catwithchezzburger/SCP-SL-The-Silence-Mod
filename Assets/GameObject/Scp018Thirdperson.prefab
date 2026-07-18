@@ -43,11 +43,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c0770b07307280ca3f478c9644a970, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   InitialPoolSize: 2
   OverflowMode: 2
-  _idleOverride: {fileID: 0}
+  _idleOverride: {fileID: 7400000, guid: 315f379d5cdaa65449f4b42dd17bd795, type: 2}
 --- !u!1 &1730242686860875
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,7 +76,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: -0.04975, y: 0.15071, z: 0.06397}
-  m_LocalScale: {x: 4.6655998, y: 4.6655998, z: 4.6655998}
+  m_LocalScale: {x: 4.6656, y: 4.6656, z: 4.6656}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4724804207875695}

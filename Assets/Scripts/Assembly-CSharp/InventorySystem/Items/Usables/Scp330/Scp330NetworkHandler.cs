@@ -64,6 +64,10 @@ namespace InventorySystem.Items.Usables.Scp330
 
 		private static void ClientSelectMessageReceived(SelectScp330Message msg)
         {
+            // Remembered per-serial so a spectator viewmodel created after the selection
+            // (InitSpectator) can still resolve which candy is currently held.
+            ReceivedSelectedCandies[msg.Serial] = (CandyKindID)msg.CandyID;
+
             OnClientSelectMessageReceived?.Invoke(msg);
 
             if (!InventoryExtensions.TryGetHubHoldingSerial(msg.Serial, out ReferenceHub hub)) return;

@@ -62,6 +62,17 @@ namespace InventorySystem.Items.Usables.Scp330
         {
             Scp330NetworkHandler.OnClientSelectMessageReceived += HandleSelectMessage;
             base.InitSpectator(ply, id, wasEquipped);
+            OnEquipped();
+
+            // v12 records every candy selection into ReceivedSelectedCandies but never reads it
+            // back, so a spectator who starts watching mid-hold is stuck on the closed bag.
+            // Completing the mechanism (as later game versions do) restores the held candy.
+            if (wasEquipped
+                && Scp330NetworkHandler.ReceivedSelectedCandies.TryGetValue(id.SerialNumber, out CandyKindID heldCandy)
+                && heldCandy != CandyKindID.None)
+            {
+                SetCandyModel(heldCandy);
+            }
         }
 
         internal override void OnEquipped()
@@ -217,7 +228,7 @@ namespace InventorySystem.Items.Usables.Scp330
             if (msg.Serial == ItemId.SerialNumber)
             {
                 SetCandyModel((CandyKindID)msg.CandyID);
-                OnUsingCancelled();
+                OnUsingStarted();
             }
         }
 

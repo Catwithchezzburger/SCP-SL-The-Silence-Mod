@@ -70,6 +70,11 @@ namespace InventorySystem.Items.Firearms
         {
             base.OnEquipped();
             _revolver = base.ParentItem as Revolver;
+
+            if (IsSpectator)
+            {
+                AnimatorSetFloat(FirearmAnimatorHashes.Random, UnityEngine.Random.value);
+            }
         }
 
         private void RefreshPrimers(int offset)
