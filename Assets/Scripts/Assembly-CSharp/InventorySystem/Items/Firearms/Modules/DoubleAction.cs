@@ -114,6 +114,24 @@ namespace InventorySystem.Items.Firearms.Modules
             _firearm.OnShotCalled += ResetCocked;
             _firearm.OnDryfired += ResetCocked;
             _firearm.OnEquippedCalled += OnEquipped;
+            _firearm.OnStatusChanged += SpectatorSyncCocked;
+        }
+
+        private void SpectatorSyncCocked(FirearmStatus prev, FirearmStatus cur)
+        {
+            // Spectator-simulated copies have no local input driving _isCocked — mirror the
+            // flag from the received status and play the cocking animation on the viewmodel.
+            AnimatedFirearmViewmodel vm = _firearm.ClientViewmodel;
+            if (vm == null || !vm.IsSpectator)
+                return;
+
+            bool cocked = cur.Flags.HasFlagFast(FirearmStatusFlags.Cocked);
+            if (cocked == _isCocked)
+                return;
+
+            _isCocked = cocked;
+            if (cocked)
+                vm.AnimatorSetTrigger(_cockingTriggerHash);
         }
 
         private void ResetCocked() => Cocked = false;
