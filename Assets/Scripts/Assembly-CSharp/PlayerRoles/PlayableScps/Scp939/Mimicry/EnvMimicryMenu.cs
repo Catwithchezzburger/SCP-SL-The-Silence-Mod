@@ -123,7 +123,7 @@ namespace PlayerRoles.PlayableScps.Scp939.Mimicry
 
         private void OnDestroy()
         {
-            _subroutine.OnSoundPlayed -= CloseMenu;
+            if(_subroutine != null) _subroutine.OnSoundPlayed -= CloseMenu;
             global::PlayerRoles.PlayerRoleManager.OnRoleChanged -= OnRoleChanged;
         }
 

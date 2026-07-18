@@ -108,7 +108,10 @@ namespace PlayerRoles.PlayableScps.Scp939.Mimicry
 
 		private void OnDestroy()
 		{
+			if (_mimicPointController != null)
+			{
 			_mimicPointController.OnMessageReceived -= HandleRpc;
+			}
 		}
 	}
 }
