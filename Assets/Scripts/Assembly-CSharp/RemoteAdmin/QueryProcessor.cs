@@ -826,11 +826,14 @@ namespace RemoteAdmin
                 return false;
 
             string text = string.Concat(new object[] { message, ":[:COUNTER:]:", counter, ":[:SALT:]:", ServerRandom });
-            byte[] buffer = global::System.Buffers.ArrayPool<byte>.Shared.Rent(global::System.Text.Encoding.UTF8.GetMaxByteCount(text.Length));
-            int byteCount = Utf8.GetBytes(text, buffer);
-            bool result = global::Cryptography.Sha.Sha512Hmac(buffer, 0, byteCount, _key).SequenceEqual(signature);
-            global::System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
-            return result;
+            // Must be an exact-length array, not a pooled one: Sha512Hmac uses the ENTIRE first
+            // argument as the HMAC key, so any garbage bytes past the text (leftovers from previous
+            // pool renters) would make client and server signatures diverge and reject even a
+            // correct password. See the matching note in HmacSign.
+            byte[] data = global::System.Text.Encoding.UTF8.GetBytes(text);
+            if (_key == null || data.Length > _key.Length)
+                return false;
+            return global::Cryptography.Sha.Sha512Hmac(data, 0, data.Length, _key).SequenceEqual(signature);
         }
 
         private bool VerifyEcdsaSignature(string message, int counter, byte[] signature, bool validateCounter = true)
@@ -875,17 +878,18 @@ namespace RemoteAdmin
                 return null;
             }
             string text = string.Concat(new object[] { message, ":[:COUNTER:]:", counter, ":[:SALT:]:", ServerRandom });
-            byte[] buffer = global::System.Buffers.ArrayPool<byte>.Shared.Rent(global::System.Text.Encoding.UTF8.GetMaxByteCount(text.Length));
-            int byteCount = Utf8.GetBytes(text, buffer);
-            if (byteCount > Key.Length)
+            // Exact-length array on purpose (see VerifyHmacSignature): Sha512Hmac keys the HMAC with
+            // the whole first argument, so a pooled buffer's dirty tail would randomize the signature.
+            // The shipped game rented from ArrayPool here and got away with it only when both sides
+            // happened to hold zero-clean pool arrays; with our dirty pools the password login always
+            // failed and three "failed" attempts kicked the player even on a correct password.
+            byte[] data = global::System.Text.Encoding.UTF8.GetBytes(text);
+            if (data.Length > Key.Length)
             {
-                global::System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
                 global::GameCore.Console.AddLog("Command too long to sign with the password key - use a public-key admin login (or complete the secure ECDHE exchange) for long commands such as CASSIE.", global::UnityEngine.Color.magenta);
                 return null;
             }
-            byte[] result = global::Cryptography.Sha.Sha512Hmac(buffer, 0, byteCount, Key);
-            global::System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
-            return result;
+            return global::Cryptography.Sha.Sha512Hmac(data, 0, data.Length, Key);
         }
 
         public static byte[] DerivePassword(string password, byte[] serversalt, byte[] clientsalt)
