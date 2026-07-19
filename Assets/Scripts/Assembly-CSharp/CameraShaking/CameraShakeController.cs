@@ -74,7 +74,9 @@ namespace CameraShaking
 
             HashSetPool<float>.Shared.Return(fovModifiers);
 
-            transform.SetLocalPositionAndRotation(_startPos + offsetPos, rootRot);
+            transform.localRotation = rootRot;
+            transform.localPosition = _startPos;
+            transform.position += offsetPos;
             if (_viewmodelRoot != null)
                 _viewmodelRoot.localRotation = viewmodelRot;
         }
