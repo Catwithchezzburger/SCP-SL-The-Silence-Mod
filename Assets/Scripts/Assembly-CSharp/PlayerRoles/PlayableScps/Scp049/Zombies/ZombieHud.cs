@@ -68,7 +68,13 @@ namespace PlayerRoles.PlayableScps.Scp049.Zombies
             _hands.SetBool(EatHash, _consumeAbility.IsInProgress);
             _attackCooldownIcon.Update(false);
 
-            UpdateBloodlust(_bloodlustFill, _bloodlustBackground, _fpcModule.WalkSpeed);
+            if (_fpcModule != null)
+            {
+                float min = _fpcModule.NormalSpeed;
+                float max = _fpcModule.BloodlustSpeed;
+                float bloodlust = (_fpcModule.WalkSpeed - min) / (max - min);
+                UpdateBloodlust(_bloodlustFill, _bloodlustBackground, bloodlust);
+            }
         }
 
         private void PlayAttack()
@@ -107,15 +113,17 @@ namespace PlayerRoles.PlayableScps.Scp049.Zombies
                 SetTransparency(background, _bloodlustAlpha);
             }
 
+            Sprite eye;
             if (fillAmount > 0.75f)
-                fill.sprite = _eyeOpen;
+                eye = _eyeOpen;
             else if (fillAmount > 0.4f)
-                fill.sprite = _eyeSemiOpen;
+                eye = _eyeSemiOpen;
             else
-                fill.sprite = _eyeClosed;
+                eye = _eyeClosed;
 
+            fill.sprite = eye;
             if (background != null)
-                background.sprite = _eyeOpen;
+                background.sprite = eye;
 
             _bloodlustLerpValue = Mathf.Lerp(_bloodlustLerpValue, fillAmount, Time.deltaTime * 1.5f);
             fill.fillAmount = _bloodlustLerpValue;

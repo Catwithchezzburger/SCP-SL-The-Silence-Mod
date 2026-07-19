@@ -149,8 +149,15 @@ namespace PlayerRoles.PlayableScps.Scp106
             }
             if (component is global::Interactables.Interobjects.DoorUtils.IScp106PassableDoor scp106PassableDoor && scp106PassableDoor.IsScp106Passable)
             {
-                col.isTrigger = true;
-                EnabledColliders.Add(col);
+                // Unity forbids isTrigger on concave (non-convex) MeshColliders and logs a spammy error.
+                // SCP-106-passable doors normally use convex colliders; guard here so a stray concave
+                // MeshCollider on a passable door doesn't throw the "Triggers on concave MeshColliders
+                // are not supported" error every physics tick.
+                if (!(col is global::UnityEngine.MeshCollider meshCollider) || meshCollider.convex)
+                {
+                    col.isTrigger = true;
+                    EnabledColliders.Add(col);
+                }
                 _slowndownTarget = global::UnityEngine.Mathf.Max(_slowndownTarget, global::UnityEngine.Mathf.Clamp01(1f - component.GetExactState()));
             }
         }

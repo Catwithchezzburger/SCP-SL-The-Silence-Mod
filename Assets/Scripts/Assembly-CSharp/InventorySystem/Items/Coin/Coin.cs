@@ -53,6 +53,12 @@ namespace InventorySystem.Items.Coin
             if (!InventoryGuiController.ItemsSafeForInteraction) return;
             if (_lastUseSw.Elapsed.TotalSeconds < RateLimit) return;
 
+            // Only allow a new flip once the viewmodel has returned to Idle, so the
+            // toss animation/sound can't be re-triggered while one is still playing.
+            if (ViewModel is AnimatedViewmodelBase animatedViewmodel &&
+                animatedViewmodel.GetAnimatorStateInfo(0).shortNameHash != IdleHash)
+                return;
+
             for (int i = 0; i < _activationKeys.Length; i++)
             {
                 if (Input.GetKeyDown(_activationKeys[i]))
