@@ -314,7 +314,10 @@ public class FlickerableLightController : NetworkBehaviour
         foreach (var light in LightsInRoom)
         {
             if (light != null)
+            {
                 light.WarheadColor = newColor;
+                light.isColorChanged = true;
+            }
         }
     }
 
