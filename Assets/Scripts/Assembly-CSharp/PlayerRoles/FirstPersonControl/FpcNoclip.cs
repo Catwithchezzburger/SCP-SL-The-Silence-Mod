@@ -135,11 +135,10 @@ namespace PlayerRoles.FirstPersonControl
         {
             if (Input.GetKeyDown(_keyFog))
             {
-                if (PostProcessing.FogController.Singleton != null)
-                {
-                    var obj = PostProcessing.FogController.Singleton.gameObject;
-                    obj.SetActive(!obj.activeSelf);
-                }
+                // Deactivating the FogController object only stops it from updating
+                // fog color/distance — the fog itself keeps rendering. The original
+                // toggles the global fog flag directly.
+                RenderSettings.fog = !RenderSettings.fog;
             }
         }
 

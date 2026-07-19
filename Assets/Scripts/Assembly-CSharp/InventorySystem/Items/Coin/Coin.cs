@@ -55,8 +55,10 @@ namespace InventorySystem.Items.Coin
 
             // Only allow a new flip once the viewmodel has returned to Idle, so the
             // toss animation/sound can't be re-triggered while one is still playing.
+            // The animator state is named "CoinIdle" but carries the tag "Idle" —
+            // the original build compares tagHash, not shortNameHash.
             if (ViewModel is AnimatedViewmodelBase animatedViewmodel &&
-                animatedViewmodel.GetAnimatorStateInfo(0).shortNameHash != IdleHash)
+                animatedViewmodel.GetAnimatorStateInfo(0).tagHash != IdleHash)
                 return;
 
             for (int i = 0; i < _activationKeys.Length; i++)

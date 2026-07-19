@@ -134,6 +134,19 @@ namespace PlayerRoles.PlayableScps.Scp096
                 HudRageDuration.Trigger(EnragedTimeLeft);
             }
 
+            // Blocker bookkeeping must run on clients too — IsBlocked drives the red
+            // warning blink of the shield bar (HsWarningColor), which the local 096
+            // otherwise only sees when playing on a listen-server host.
+            if (newState == Scp096RageState.Enraged)
+            {
+                HumeShieldBlocked = true;
+                _shieldController.AddBlocker(this);
+            }
+            else
+            {
+                HumeShieldBlocked = false;
+            }
+
             if (!NetworkServer.active)
             {
                 return;
@@ -144,16 +157,12 @@ namespace PlayerRoles.PlayableScps.Scp096
             {
                 case Scp096RageState.Enraged:
                     multiplier = EnragingShieldMultiplier;
-                    HumeShieldBlocked = true;
-                    _shieldController.AddBlocker(this);
                     break;
                 case Scp096RageState.Calming:
                     multiplier = CalmingShieldMultiplier;
                     TotalRageTime = 0f;
-                    HumeShieldBlocked = false;
                     break;
                 default:
-                    HumeShieldBlocked = false;
                     return;
             }
 

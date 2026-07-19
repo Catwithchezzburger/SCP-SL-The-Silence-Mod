@@ -106,20 +106,13 @@ namespace GameCore
                 _background.color = _hideBackground ? Color.clear : Color.black;
             }
 
-            if (loadingbar != null)
-            {
-                if (Timer >= 0)
-                {
-                    loadingbar.fillAmount = Timer / 20f;
-                }
-                else
-                {
-                    loadingbar.fillAmount = 1f;
-                }
-            }
-
+            // The bar must only ever be driven by the smooth Lerp below — snapping it
+            // to Timer/20 each frame makes it jump in one-second steps.
             if (Timer < 0)
             {
+                if (loadingbar != null)
+                    loadingbar.fillAmount = 1f;
+
                 if (startsIn != null)
                     startsIn.SetText(_roundStartTextPaused);
             }
