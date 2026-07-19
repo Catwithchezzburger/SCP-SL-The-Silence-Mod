@@ -25,6 +25,15 @@ namespace InventorySystem.Items.Usables.Scp330
 
         private static void MessageReceived(global::InventorySystem.Items.Usables.Scp330.CandyPink.CandyExplosionMessage msg)
         {
+            if (!TryGetGrenade(out var grenade))
+            {
+                return;
+            }
+            global::UnityEngine.GameObject effectInstance = global::UnityEngine.Object.Instantiate(grenade.Effect);
+            effectInstance.transform.position = msg.Origin;
+            effectInstance.transform.rotation = grenade.Effect.transform.localRotation;
+            effectInstance.transform.localScale = global::UnityEngine.Vector3.one;
+            global::UnityEngine.Object.Destroy(effectInstance, 5f);
         }
 
         private static bool TryGetGrenade(out global::InventorySystem.Items.ThrowableProjectiles.ExplosionGrenade grenade)
