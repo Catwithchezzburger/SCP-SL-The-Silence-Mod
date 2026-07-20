@@ -25,14 +25,13 @@ namespace PlayerRoles.PlayableScps.Scp079
         {
             base.OnTargetChanged(prevTarget, newTarget);
 
-            if (newTarget == null)
-                return;
+            _isSet = false;
+            _tierMng = null;
 
-            Scp079Role mainRole = newTarget.MainRole as Scp079Role;
-            if (mainRole == null)
-                return;
-
-            if (mainRole is Scp079Role && mainRole.SubroutineModule.TryGetSubroutine(out _tierMng))
+            if (newTarget != null
+                && newTarget.MainRole is Scp079Role mainRole
+                && mainRole.SubroutineModule != null
+                && mainRole.SubroutineModule.TryGetSubroutine(out _tierMng))
             {
                 _isSet = true;
             }
@@ -47,33 +46,13 @@ namespace PlayerRoles.PlayableScps.Scp079
 
             _sb.Clear();
 
-            int accessTier = _tierMng.AccessTierLevel;
-            int thresholdsCount = _tierMng.NextLevelThreshold;
-            int displayTier = Mathf.Clamp(accessTier, 0, thresholdsCount) + 1;
-
-            _sb.AppendFormat(_formatTier, displayTier);
+            _sb.AppendFormat(_formatTier, _tierMng.AccessTierLevel);
 
             int nextLevelThreshold = _tierMng.NextLevelThreshold;
             if (nextLevelThreshold > 0)
             {
                 _sb.Append(" (");
-
-                int clampedTier = Mathf.Clamp(accessTier, 0, thresholdsCount);
-                int index = clampedTier - 1;
-                int expProgress;
-
-                if (index >= 0)
-                {
-                    expProgress = _tierMng.TotalExp - _tierMng.AbsoluteThresholds[index];
-                }
-                else
-                {
-                    expProgress = _tierMng.TotalExp;
-                }
-
-                int progress = Mathf.Min(nextLevelThreshold, Mathf.FloorToInt(expProgress));
-                
-                _sb.Append(progress);
+                _sb.Append(_tierMng.RelativeExp);
                 _sb.Append("/");
                 _sb.Append(nextLevelThreshold);
                 _sb.Append(")");

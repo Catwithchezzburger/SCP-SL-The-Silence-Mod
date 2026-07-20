@@ -26,10 +26,14 @@ namespace PlayerStatsSystem
 
         public MicroHidDamageHandler(global::InventorySystem.Items.MicroHID.MicroHIDItem micro, float impulseDamage)
         {
+            DeathTranslation translation = global::PlayerStatsSystem.DeathTranslations.MicroHID;
+            _ragdollInspectText = translation.RagdollTranslation;
+            _deathScreenText = translation.DeathscreenTranslation;
+
             if (!(micro == null))
             {
                 Attacker = new global::Footprinting.Footprint(micro.Owner);
-                _serverLogsText = "Deep fried by " + Attacker.Nickname + " using " + global::PlayerStatsSystem.DeathTranslations.MicroHID.LogLabel;
+                _serverLogsText = "Deep fried by " + Attacker.Nickname + " using " + translation.LogLabel;
                 Damage = impulseDamage;
             }
         }

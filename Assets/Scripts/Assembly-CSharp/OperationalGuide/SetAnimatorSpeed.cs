@@ -5,7 +5,7 @@ namespace OperationalGuide
 {
 	internal class SetAnimatorSpeed : MonoBehaviour
 	{
-		private static readonly int Speed;
+		private static readonly int Speed = Animator.StringToHash("Speed");
 
 		public Animator Animator;
 

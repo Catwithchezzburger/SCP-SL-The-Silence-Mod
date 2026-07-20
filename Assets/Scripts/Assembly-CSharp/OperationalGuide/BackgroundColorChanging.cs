@@ -33,12 +33,16 @@ namespace OperationalGuide
 
         private void Update()
         {
-            int previousFrames = _framesActive;
-            _framesActive = 0; 
-
-            if (previousFrames != 0)
+            if (_framesActive >= 2)
             {
-                _framesActive = previousFrames + 1;
+                _framesActive = 0;
+                if (Background != null)
+                    Background.color = ColorIni;
+            }
+
+            if (_framesActive != 0)
+            {
+                _framesActive++;
                 return;
             }
 

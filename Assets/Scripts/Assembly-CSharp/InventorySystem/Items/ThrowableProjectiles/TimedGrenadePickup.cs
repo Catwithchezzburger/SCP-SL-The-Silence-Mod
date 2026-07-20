@@ -23,7 +23,7 @@ namespace InventorySystem.Items.ThrowableProjectiles
                     component.position = Rb.position;
                     component.rotation = Rb.rotation;
                     component.linearVelocity = Rb.linearVelocity;
-                    component.angularVelocity = component.angularVelocity;
+                    component.angularVelocity = Rb.angularVelocity;
                 }
                 Info.Locked = true;
                 thrownProjectile.Info = Info;

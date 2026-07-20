@@ -41,7 +41,6 @@ public class SettingsSliders : MonoBehaviour
 
         int newValue = (int)option.Slider.value;
 
-        option.SettingOption = (SettingsOption)newValue;
         PlayerPrefsSl.Set(option.SettingOption.ToString(), newValue);
 
         if (option.NumberIndicator != null)
